@@ -10,17 +10,38 @@ module.exports.memberinsert = function (req, res) {
     sql.connect(webconfig, function (err) {
         if (err) console.log(err);
         var request1 = new sql.Request();
-        request1.query("insert into Kullanici(KullaniciAd,Sifre,Email,GuvenlikSorusu,Cevap) values ('" + req.body.KullaniciAd + "','" + req.body.Sifre + "','" + req.body.Eposta + "','" + req.body.Soru + "','" + req.body.Cevap + "')", function (err, recordset) {
+
+        request1.query("Select dbo.fn_UyeKontrol('"+req.body.KullaniciAd +"','"+req.body.Eposta+"') as UyeKontrol", function (err, Kontrol) {
             if (err) {
                 console.log(err);
             }
-            res.render('giris', { hata: '' });
-            sql.close();
+
+            Kontrol.recordset.forEach(function (kullanici) {
+                if (kullanici.UyeKontrol == "Evet") {
+                    res.render('UyeOl', { hata: 'Kullanıcı adı veya e posta bulunmaktadır !' });
+                    sql.close();
+                }
+                else {
+
+                    var request1 = new sql.Request();
+                    request1.query("insert into Kullanici(KullaniciAd,Sifre,Email,GuvenlikSorusu,Cevap) values ('" + req.body.KullaniciAd + "','" + req.body.Sifre + "','" + req.body.Eposta + "','" + req.body.Soru + "','" + req.body.Cevap + "')", function (err, recordset) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        res.render('giris', { hata: '' });
+                        sql.close();
+
+                    });
+                }
+            });
+     
         });
+        
+
     });
 }
 module.exports.UyeOl = function (req, res) {
-    res.render('UyeOl');
+    res.render('UyeOl', { hata: '' });
 }
 module.exports.Giris = function (req, res) {
 
