@@ -11,18 +11,18 @@
 
 <body>
     <form action="/sifre" method="POST">
-    <div class="container" style="margin-top:100px">
+        <div class="container" style="margin-top:100px">
 
-        <div class="columns is-gapless is-multiline is-mobile">
-            <div class="column" style="margin-left:10px;margin-right:10px" id="HesapEkrani">
-                <h3 class="title is-3">1.Adım: Hesap Bilgileri</h3>
-                <label class="label">E posta</label>
-                <input class="input" id="username" name="Email" type="text">
-                <div class="field" style="margin:10px 0 10px 0">
+            <div class="columns is-gapless is-multiline is-mobile">
+                <div class="column" style="margin-left:10px;margin-right:10px" id="HesapEkrani">
+                    <h3 class="title is-3">1.Adım: Hesap Bilgileri</h3>
+                    <label class="label">E posta</label>
+                    <input class="input" id="username" name="Email" type="text">
+                    <div class="field" style="margin:10px 0 10px 0">
                         <label class="label" name="GuvenlikSorusu">Güvenlik Sorusu</label>
                         <div class="control">
                             <div class="select">
-                                <select>
+                                <select name="soru">
                                     <option>
                                         En sevdiğiniz hayvan?
                                     </option>
@@ -38,22 +38,24 @@
                     </div>
                     <label class="label" name="Cevap">Cevap</label>
                     <input class="input" id="username" name="Cevaps" type="text">
+                    <label class="label has-text-danger"><%=hata%></label>
                     <div class="field is-grouped" style="margin-top:25px">
-                            <div class="control">
-                                <input type="submit" value="Devam" class="button is-link">
-                            </div>
-                            <div class="control">
-                                <a href="/" class="button is-light">İptal</a>
-                            </div>
+                        <div class="control">
+                            <input type="submit" value="Devam" class="button is-link">
                         </div>
-            </div><!---------------------------->
-           
+                        <div class="control">
+                            <a href="/" class="button is-light">İptal</a>
+                        </div>
+                    </div>
+                </div>
+                <!---------------------------->
+
+            </div>
+
+
         </div>
-
-
-    </div>
-</form>
-<!--
+    </form>
+    <!--
     <script>
 
 

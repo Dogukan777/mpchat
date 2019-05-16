@@ -1,5 +1,5 @@
 $(function () {
-    var socket = io.connect('http://localhost:3000');
+    var socket = io.connect('/');
     socket.emit('oda', 'Genel');
     $("#send").click(function () {
         socket.emit('send message', { msg: $('#mesaj').val(), oda: $('#genel').text(),nick:$('#nick').text() });

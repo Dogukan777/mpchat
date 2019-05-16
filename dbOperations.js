@@ -49,12 +49,47 @@ module.exports.GirisYapildi = function (req, res) {
 }
 
 module.exports.sifre = function (req, res) {
-  res.render('sifre');
+    res.render('sifre', { hata: '' });
 }
 module.exports.YeniSifre = function (req, res) {
-    res.render('SifreYenileme');
-  }
-  
+
+    sql.connect(webconfig, function (err) {
+        if (err) console.log(err);
+        var request1 = new sql.Request();
+        request1.query(" Select dbo.fn_SifreYenileme('" + req.body.Email + "','" + req.body.Cevaps + "') as SifreSonuc", function (err, verisonucu) {
+            if (err) {
+                console.log(err);
+            }
+            verisonucu.recordset.forEach(function (kullanici) {
+                if (kullanici.SifreSonuc == "Evet") {
+                    res.render('SifreYenileme', { Email: req.body.Email, Cevap: req.body.Cevaps, soru: req.body.soru, hata: '' });
+                }
+                else {
+                    res.render('sifre', { hata: 'Lütfen bilgilerinizi kontrol ediniz !' })
+                }
+            });
+            sql.close();
+        });
+    });
+}
+
+module.exports.sifreUpdate = function (req, res) {
+    if (req.body.password1 != req.body.password2) {
+        res.render('SifreYenileme', { Email: req.body.Email, Cevap: req.body.Cevaps, soru: req.body.soru, hata: 'Şifreler Uyuşmuyor !' });
+    }
+    sql.connect(webconfig, function (err) {
+        if (err) console.log(err);
+        var request1 = new sql.Request();
+        request1.query("update kullanici set Sifre='" + req.body.password1 + "' where Email='" + req.body.Email + "' and Cevap='" + req.body.Cevaps + "'", function (err, verisonucu) {
+            if (err) {
+                console.log(err);
+            }
+            res.render('giris', { hata: '' })
+            sql.close();
+        });
+    });
+}
+
 
 /*
 module.exports.YeniSifre = function (req, res) {
@@ -65,7 +100,7 @@ module.exports.YeniSifre = function (req, res) {
             if (err) {
                 console.log(err);
             }
-           
+
             res.render('giris',{hata:''});
              sql.close();
         });

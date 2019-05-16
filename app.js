@@ -18,6 +18,9 @@ app.post('/UyeOl', login.memberinsert);
 app.get('/', login.Giris);
 app.get('/sifre',login.sifre);
 app.post('/sifre',login.YeniSifre);
+app.post('/sifreUpdate',login.sifreUpdate);
+
+
 
 app.get('/kuzey', function (req, res) {
     res.render('kuzey')
