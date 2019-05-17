@@ -40,10 +40,11 @@ $(function () {
 
 
     function scrollBottom() {
-        scrollingElement = (document.scrollingElement || document.body)
+        scrollingElement = document.getElementById('icerik');
         $(scrollingElement).animate({
-            scrollTop: document.body.scrollHeight
-        }, 500);
+            scrollTop: scrollingElement.scrollHeight
+        });
+
     }
 });
 

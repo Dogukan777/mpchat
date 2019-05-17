@@ -11,7 +11,7 @@ module.exports.memberinsert = function (req, res) {
         if (err) console.log(err);
         var request1 = new sql.Request();
 
-        request1.query("Select dbo.fn_UyeKontrol('"+req.body.KullaniciAd +"','"+req.body.Eposta+"') as UyeKontrol", function (err, Kontrol) {
+        request1.query("Select dbo.fn_UyeKontrol('" + req.body.KullaniciAd + "','" + req.body.Eposta + "') as UyeKontrol", function (err, Kontrol) {
             if (err) {
                 console.log(err);
             }
@@ -34,9 +34,9 @@ module.exports.memberinsert = function (req, res) {
                     });
                 }
             });
-     
+
         });
-        
+
 
     });
 }
@@ -44,7 +44,6 @@ module.exports.UyeOl = function (req, res) {
     res.render('UyeOl', { hata: '' });
 }
 module.exports.Giris = function (req, res) {
-
     res.render('giris', { hata: '' });
 }
 module.exports.GirisYapildi = function (req, res) {
@@ -55,16 +54,22 @@ module.exports.GirisYapildi = function (req, res) {
             if (err) {
                 console.log(err);
             }
-            debugger
             verisonucu.recordset.forEach(function (kullanici) {
                 if (kullanici.Sonuc == "Evet") {
-                    res.render('genel', { nick: req.body.ad });
+                    var request1 = new sql.Request();
+                    request1.query("insert into AktifKullanici values('" + req.body.ad + "',GETDATE())", function (err, recordset) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        res.render('genel', { nick: req.body.ad });
+                        sql.close();
+                    });
                 }
                 else {
                     res.render('giris', { hata: 'Kullanici Adi veya Şifre Hatalı !' })
+                    sql.close();
                 }
             });
-            sql.close();
         });
     });
 }
@@ -110,6 +115,13 @@ module.exports.sifreUpdate = function (req, res) {
         });
     });
 }
+
+
+
+
+
+
+
 
 
 /*
