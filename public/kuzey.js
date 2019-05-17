@@ -1,4 +1,9 @@
 $(function () {
+    $("#icerik").height($(document.body).height() * 4.4);
+    scrollingElement = (document.scrollingElement || document.body)
+    $(scrollingElement).animate({
+        scrollTop: document.body.scrollHeight
+    });
     var socket = io.connect('/');
     socket.emit('oda','Kuzey');
     $("#send").click(function () {

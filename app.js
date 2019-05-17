@@ -20,10 +20,6 @@ app.get('/sifre',login.sifre);
 app.post('/sifre',login.YeniSifre);
 app.post('/sifreUpdate',login.sifreUpdate);
 
-app.get('/genel', function (req, res) {
-    res.render('genel',{ nick: 'req.params.nick' })
-})
-
 app.get('/kuzey', function (req, res) {
     res.render('kuzey')
 })

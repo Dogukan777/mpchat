@@ -1,5 +1,5 @@
 $(function () {
-    $("#icerik").height($(document.body).height() * 4.4);
+    $("#icerik").height($(document.body).height() * 5);
     scrollingElement = (document.scrollingElement || document.body)
     $(scrollingElement).animate({
         scrollTop: document.body.scrollHeight
