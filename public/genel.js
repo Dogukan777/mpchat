@@ -90,3 +90,4 @@ window.onclick = function (event) {
         document.getElementById("main").style.marginLeft = "0";
     }
 }
+

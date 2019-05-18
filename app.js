@@ -14,7 +14,9 @@ app.post('/giris', login.GirisYapildi);
 app.get('/UyeOl', login.UyeOl);
 
 app.post('/UyeOl', login.memberinsert);
-
+app.get('/msgEkle',function(req,res){
+    res.send('asd')
+});
 app.get('/', login.Giris);
 app.get('/sifre',login.sifre);
 app.post('/sifre',login.YeniSifre);

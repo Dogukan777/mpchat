@@ -7,7 +7,7 @@ $(function () {
     var socket = io.connect('/');
     socket.emit('oda', 'Güney');
     $("#send").click(function () {
-        socket.emit('send message', { msg:$('#mesaj').val() , oda: $('#guney').text() });
+        socket.emit('send message', { msg: $('#mesaj').val(), oda: $('#guney').text(), nick: $('#nick').text() });
         $('#mesaj').val('');
         $("#mesaj").focus();
         scrollBottom();
@@ -15,7 +15,7 @@ $(function () {
     $('#mesaj').keypress(function (event) {
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if (keycode == '13') {
-            socket.emit('send message', { msg:$('#mesaj').val() , oda: $('#guney').text() });
+            socket.emit('send message', { msg: $('#mesaj').val(), oda: $('#guney').text(), nick: $('#nick').text() });
             $('#mesaj').val('');
             $("#mesaj").focus();
             scrollBottom()
@@ -24,11 +24,11 @@ $(function () {
     });
 
     socket.on('send message', (data) => {
-        $('#messages').append($('<li>').text(data));
+        document.getElementById('messages').innerHTML += '<li><h6 class="title is-6">' + data.nick + '</h6>' + data.msg + '</li>'
         scrollBottom()
     });
     socket.on('Imessage', (data) => {
-        $('#messages').append($('<li class="Imessage">').text(data));
+        document.getElementById('messages').innerHTML += '<li class="Imessage"> <h6 class="title is-6">' + $('#nick').text() + '</h6>' + data + '</li>'
         $('#messages').append($('<div class="clear">'));
     });
 
@@ -53,7 +53,7 @@ $(function () {
     }
 });
 
-
+document.getElementById('nick').innerHTML=localStorage.getItem('Ad')
 
 
 
