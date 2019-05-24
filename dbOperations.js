@@ -1,12 +1,12 @@
 const sql = require('mssql')
-
-// var webconfig = {
-//     user: 'dogukan00',
-//     password: 'dogukan.12',
-//     server: 'MpChats.mssql.somee.com',
-//     database: 'MpChats',
-//     port: 1433
-// };
+ var webconfig = {
+    user: 'dogukan00',
+    password: 'dogukan.12',
+    server: 'MpChats.mssql.somee.com',
+    database: 'MpChats',
+    port: 1433
+ };
+/*
 var webconfig = {
     user: 'dogukan',
     password: 'Prepernburn2',
@@ -15,7 +15,7 @@ var webconfig = {
     options: {
         encrypt: true
     }
-};
+};*/
 const pool2 = new sql.ConnectionPool(webconfig)
 const pool2Connect = pool2.connect()
 
