@@ -1,10 +1,27 @@
 const sql = require('mssql')
+
+// var webconfig = {
+//     user: 'dogukan00',
+//     password: 'dogukan.12',
+//     server: 'MpChats.mssql.somee.com',
+//     database: 'MpChats',
+//     port: 1433
+// };
 var webconfig = {
-    user: 'dogukan00',
-    password: 'dogukan.12',
-    server: 'MpChats.mssql.somee.com',
-    database: 'MpChats'
+    user: 'dogukan',
+    password: 'Prepernburn2',
+    server: 'dogukan12.database.windows.net',
+    database: 'MpChat',
+    options: {
+        encrypt: true
+    }
 };
+const pool2 = new sql.ConnectionPool(webconfig)
+const pool2Connect = pool2.connect()
+
+pool2.on('error', err => {
+   debugger
+})
 
 module.exports.memberinsert = function (req, res) {
     sql.connect(webconfig, function (err) {
@@ -46,22 +63,37 @@ module.exports.UyeOl = function (req, res) {
 module.exports.Giris = function (req, res) {
     res.render('giris', { hata: '' });
 }
-module.exports.msgEkle = function (msg, nick, oda, req, res) {
-    sql.connect(webconfig, function (err) {
+module.exports.msgEkle = async function (msg, nick, oda, req, res) {
+    /*sql.connect(webconfig, function (err) {
         if (err) console.log(err);
         var request1 = new sql.Request();
-        request1.query("insert into Mesajlar VALUES ('" + msg + "',(select Id from Kullanici where KullaniciAd = '" + nick + "'),GETDATE(),'" + oda + "')", function (err, verisonucu) {
-            
+        request1.query("insert into Mesajlar VALUES ('" + msg + "',(select Id from Kullanici where KullaniciAd = '" + nick + "'),GETDATE(),'" + oda + "'", function (err, verisonucu) {
             if (err) {
                 console.log(err);
             }
-       sql.close();
-            
+            sql.close();
         });
-        
-      
-    });
-  
+    });*/
+    //const pool = new sql.ConnectionPool(webconfig);
+
+    return pool2Connect.then((pool) => {
+		pool.request() // or: new sql.Request(pool2)
+		.query("insert into Mesajlar VALUES ('" + msg + "',(select Id from Kullanici where KullaniciAd = '" + nick + "'),GETDATE(),'" + oda + "')").then(function (params2) {
+            console.dir(params2)
+            return params2;
+        })
+    }).catch(err => {
+        // ... error handler
+    })
+    
+    // or: new sql.Request(pool1)
+
+    // pool.query("insert into Mesajlar VALUES ('" + msg + "',(select Id from Kullanici where KullaniciAd = '" + nick + "'),GETDATE(),'" + oda + "'", function (err, rows, fields) {
+    //     if (err) throw err;
+
+    //     console.log('The solution is: ', rows[0].solution);
+    // });
+
 }
 module.exports.GirisYapildi = function (req, res) {
     sql.connect(webconfig, function (err) {
@@ -86,9 +118,7 @@ module.exports.GirisYapildi = function (req, res) {
                             res.render('genel', { nick: req.body.ad, mesajlar: mesajlar.recordset });
 
                         });
-
                     });
-                    
                 }
                 else {
                     res.render('giris', { hata: 'Kullanici Adi veya Şifre Hatalı !' })
