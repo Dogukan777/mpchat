@@ -26,8 +26,32 @@ body,html{
             transition: 0.5s;
             padding-top: 60px;
         }
+       
+      
+      
 
         .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+        .sidenavright {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 30;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+         
+        }
+        .sidenavright a {
             padding: 8px 8px 8px 32px;
             text-decoration: none;
             font-size: 25px;
@@ -52,8 +76,8 @@ body,html{
             transition: margin-left .5s;
             padding: 16px;
         }
-
-        @media screen and (max-height: 450px) {
+      
+        @media screen and (max-height: 450px ) {
             .sidenav {
                 padding-top: 15px;
             }
@@ -71,7 +95,8 @@ body,html{
         #messages li {
             
             background-color: #f8f8f8;
-            box-shadow: 0 .5rem 1rem rgba(0,0,0,.10)!important;
+            /*box-shadow: 0 .5rem 1rem rgba(0,0,0,.10)!important;*/
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,1.1)!important;
             margin: 9px;
             padding: 5px 10px;
             width: 50%;
@@ -88,9 +113,15 @@ body,html{
             text-align: right;
             float: right;
             background-color: #f8f8f8;
-            box-shadow: 0 .5rem 1rem rgba(0,0,0,.10)!important;
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,1.1)!important;
             margin: 9px;
         }
         .clear{
             clear: both;
+        }
+        #SagNav{
+           float:right;
+            font-size:25px;
+            cursor:pointer;
+
         }

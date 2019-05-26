@@ -19,7 +19,7 @@
                             <nav class="navbar is-fixed-top" role="navigation" aria-label="dropdown navigation" >
                                     <span style="font-size:25px;cursor:pointer;float:left" onclick="openNav()">&#9776;</span>
                                     <a class="subtitle is-4" >MpChat</a><a class="subtitle is-6" > Genel</a>
-                                 <div id="nick" style="display:none" ><%=nick%></div>
+                     
                               
                                         <span id="SagNav" style="float:right" onclick="openNavRight()">&#9776;</span>
                                     
@@ -32,7 +32,9 @@
             <div id="mySidenavright" class="sidenavright" >
                 
                 <a href="javascript:void(0)" class="closebtn" onclick="closeNavRight()">&times;</a>
+     
                 <a class="subtitle is-3" href="/hesap">Hesap Ayarları</a>
+       
                 <a href="#" id="Cikis">Hesabımı Sil</a>
                 <a href="/" id="Cikis">Çıkış</a>
             </div>
@@ -53,45 +55,47 @@
             
 </div>
         
+<form action="/hesapupdate" method="POST">
         <div class="icerik" id="icerik">
-            <ul id="messages">
-                <% mesajlar.forEach(function(mesajlar){ %>
-                <% if(nick===mesajlar.KullaniciAd) { %>
-                <li class="Imessage"><span class="is-size-7" style="float: left"><%= mesajlar.eklenmeTarihi %></span>
-                    <h6 class="title is-6"><%= mesajlar.KullaniciAd %></h6><%= mesajlar.msg %>
-                    <span class="icon has-text-success" style="float: left">
-                        <i class="fas fa-check"></i>
-                    </span>
-                </li>
-                <div class="clear"></div>
-                <% } else { %>
-                <li>
-                    <span class="is-size-7" style="float: right"><%= mesajlar.eklenmeTarihi %></span>
-                    <h6 class="title is-6"><%= mesajlar.KullaniciAd %></h6><%= mesajlar.msg %>
-                    <span class="icon has-text-success" style="float: right;">
-                        <i class="fas fa-check"></i>
-                    </span>
-                </li>
-                <% } %>
-                <% }); %>
-
-            </ul>
+                <div class="container box" style="padding:10px; margin-top:2%; padding: 3%;" >
+                        <label class="label">Kullanıcı Adı</label> 
+                        <input class="input" id="username" name="mynickname" type="text"  value="<%=nickname%>">
+                        <input class="input" id="username" name="mynickname2" type="text"  value="<%=nickname%>" style="display:none">
+   
+                        <label class="label">Şifre</label>
+                        <input class="input" id="username" name="mypassword" type="password"  value="<%=password%>">
+                      
+                        <label class="label" name="GuvenlikSorusu" >Güvenlik Sorusu</label>
+                            <div class="select">
+                                <select name="Soru" >
+                                    <option >
+                                        En sevdiğiniz hayvan?
+                                    </option>
+                                    <option>
+                                        En sevdiğiniz renk?
+                                    </option>
+                                    <option>
+                                        En yakın arkadaşınızın adı nedir?
+                                    </option>
+                                </select>
+                            </div>
+                            <label class="label">Cevap</label>
+                            <input class="input" id="username" name="myreply" type="text"  value="<%=reply%>">
+                            <label class="label has-text-danger"><%=hata%></label>
+                            <div class="control">
+                                    <button type="submit" class="button is-link" style="margin:2%">Hesabımı Güncelle</button>
+                                    <a href="/genel" class="button is-light" style="margin:2%">İptal</a>
+                                </div>
+                        </div>
+                       
+                          
+                    </div>
         </div>
 
-        <div id="footer">
-            <div class="field has-addons">
-                <div class="control is-expanded">
-                    <input id="mesaj" class="input is-info" type="text" placeholder="Mesajınızı buraya yazınız..">
-                </div>
-                <div class="control">
-                    <a id="send" class="button is-info">
-                        Send
-                    </a>
-                </div>
-            </div>
-        </div>
+        
     </div>
 
+  </form>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
     <script src="genel.js"></script>
