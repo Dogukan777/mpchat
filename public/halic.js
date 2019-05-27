@@ -45,6 +45,9 @@ $(function () {
         $('#messages').append($('<div class="clear">'));
     });
 
+    socket.on('onlineUser', (count) => {
+        $('#onlineUser').text(count);
+    });
 
 
 
@@ -84,9 +87,8 @@ $(function () {
 
 
 
-
 function openNav() {
-    document.getElementById("mySidenav").style.width = "215px";
+    document.getElementById("mySidenav").style.width = "250px";
     document.getElementById("main").style.marginLeft = "250px";
 }
 
@@ -95,26 +97,14 @@ function closeNav() {
     document.getElementById("main").style.marginLeft = "0";
     document.body.style.backgroundColor = "white";
 }
-
-function openNavRight() {
-    document.getElementById("mySidenavright").style.width = "200px";
-    document.getElementById("main").style.marginLeft = "250px";
-}
-
-function closeNavRight() {
-    document.getElementById("mySidenavright").style.width = "0";
-    document.getElementById("main").style.marginLeft = "0";
-}
-
 //window.onclick = function (event) {
-    //if (event.target.className == 'icerik') {
-        //document.getElementById("mySidenav").style.width = "0";
-        //document.getElementById("main").style.marginLeft = "0";
-   // }
+//if (event.target.className == 'icerik') {
+//document.getElementById("mySidenav").style.width = "0";
+//document.getElementById("main").style.marginLeft = "0";
+// }
 //}
 
-
-
+document.getElementById('nick').innerHTML = localStorage.getItem('Ad')
 
 
 var close = document.getElementsByClassName('modal-close')[0];
@@ -138,4 +128,3 @@ function onay(adres) {
         location.href = '/halic';
     }
 }
-document.getElementById('nick').innerHTML = localStorage.getItem('Ad')

@@ -11,15 +11,6 @@ function closeNav() {
     document.body.style.backgroundColor = "white";
 }
 
-function openNavRight() {
-    document.getElementById("mySidenavright").style.width = "200px";
-    document.getElementById("main").style.marginLeft = "250px";
-}
-
-function closeNavRight() {
-    document.getElementById("mySidenavright").style.width = "0";
-    document.getElementById("main").style.marginLeft = "0";
-}
 
 //window.onclick = function (event) {
     //if (event.target.className == 'icerik') {
