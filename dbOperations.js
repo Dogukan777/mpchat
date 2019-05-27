@@ -64,6 +64,21 @@ module.exports.UyeOl = function (req, res) {
 module.exports.Giris = function (req, res) {
     res.render('giris', { hata: '' });
 }
+
+module.exports.HesapSilindi = function (req, res) {
+    sql.connect(webconfig, function (err) {
+        var request1 = new sql.Request();
+        request1.query("delete from kullanici where Id="+req.params.id+"", function (err, verisonucu) {
+            if (err) {
+                console.log(err);
+            }
+            sql.close();
+            res.render('giris', { hata:'' });
+
+        });
+    });
+}
+
 module.exports.msgEkle = async function (msg, nick, oda, req, res) {
     /*sql.connect(webconfig, function (err) {
         if (err) console.log(err);
@@ -116,9 +131,13 @@ module.exports.GirisYapildi = function (req, res) {
                             if (err) {
                                 console.log(err);
                             }
+                            request1.query("select * from kullanici where KullaniciAd='"+req.session.nick+"'", function (err, kullanicilar) {
+                                if (err) {
+                                    console.log(err);
+                                }
                             sql.close();
-                            res.render('genel', { nick: req.body.ad, mesajlar: mesajlar.recordset });
-
+                            res.render('genel', { nick: req.body.ad, mesajlar: mesajlar.recordset,kullanici:kullanicilar.recordset });
+                        });
                         });
                     });
                 }
@@ -137,9 +156,13 @@ module.exports.getMsgKuzey = function (req, res) {
             if (err) {
                 console.log(err);
             }
+            request1.query("select * from kullanici where KullaniciAd='uye'", function (err, kullanicilar) {
+                if (err) {
+                    console.log(err);
+                }
             sql.close();
-            res.render('kuzey', { nick: req.session.nick, mesajlar: mesajlar.recordset });
-
+            res.render('kuzey', { nick: req.session.nick, mesajlar: mesajlar.recordset,kullanici:kullanicilar.recordset });
+        });
         });
     });
 }
@@ -149,10 +172,13 @@ module.exports.getMsgGuney = function (req, res) {
         request1.query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Güney' and m.userID = k.Id", function (err, mesajlar) {
             if (err) {
                 console.log(err);
-            }
+            }   request1.query("select * from kullanici where KullaniciAd='uye'", function (err, kullanicilar) {
+                if (err) {
+                    console.log(err);
+                }
             sql.close();
-            res.render('guney', { nick: req.session.nick, mesajlar: mesajlar.recordset });
-
+            res.render('guney', { nick: req.session.nick, mesajlar: mesajlar.recordset,kullanici:kullanicilar.recordset });
+        });
         });
     });
 }
@@ -163,9 +189,13 @@ module.exports.getMsgHalic = function (req, res) {
             if (err) {
                 console.log(err);
             }
+            request1.query("select * from kullanici where KullaniciAd='uye'", function (err, kullanicilar) {
+                if (err) {
+                    console.log(err);
+                }
             sql.close();
-            res.render('halic', { nick: req.session.nick, mesajlar: mesajlar.recordset });
-
+            res.render('halic', { nick: req.session.nick, mesajlar: mesajlar.recordset,kullanici:kullanicilar.recordset });
+        });
         });
     });
 }
@@ -176,9 +206,13 @@ module.exports.getGenel = function (req, res) {
             if (err) {
                 console.log(err);
             }
+            request1.query("select * from kullanici where KullaniciAd='uye'", function (err, kullanicilar) {
+                if (err) {
+                    console.log(err);
+                }
             sql.close();
-            res.render('genel', { nick: req.session.nick, mesajlar: mesajlar.recordset });
-
+            res.render('genel', { nick: req.session.nick, mesajlar: mesajlar.recordset,kullanici:kullanicilar.recordset});
+        });
         });
     });
 }
@@ -266,9 +300,24 @@ module.exports.hesapupdate = function (req, res) {
     });
 
 }
+/*
+module.exports.sil = function (req, res) {
+    sql.connect(webconfig, function (err) {
+        if (err) console.log(err);
+        var request1 = new sql.Request();
+        request1.query("delete from kullanici where Id="+req.params.id+"", function (err, verisonucu) {
+            if (err) {
+                console.log(err);
+            }
+        });
+      
+            
+            res.render('giris',{hata:''});
+      sql.close();
+    });
+}
 
-
-
+*/
 
 
 /*
