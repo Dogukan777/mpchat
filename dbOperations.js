@@ -169,6 +169,19 @@ module.exports.getMsgHalic = function (req, res) {
         });
     });
 }
+module.exports.getGenel = function (req, res) {
+    sql.connect(webconfig, function (err) {
+        var request1 = new sql.Request();
+        request1.query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Genel' and m.userID = k.Id", function (err, mesajlar) {
+            if (err) {
+                console.log(err);
+            }
+            sql.close();
+            res.render('genel', { nick: req.session.nick, mesajlar: mesajlar.recordset });
+
+        });
+    });
+}
 module.exports.sifre = function (req, res) {
     res.render('sifre', { hata: '' });
 }
@@ -218,13 +231,12 @@ module.exports.hesap = function (req, res) {
             if (err) {
                 console.log(err);
             }
-            sql.close();
-
-            hesap.recordset.forEach(function (kullanici) {
-                res.render('hesap', { nickname: kullanici.KullaniciAd, password: kullanici.Sifre, Email: kullanici.Email, reply: kullanici.Cevap,hata:'',nick:req.body.ad,question:kullanici.GuvenlikSorusu} );
+            request1.query("select * from guvenlikSorusu", function (err, soru) {
+                hesap.recordset.forEach(function (kullanici) {
+                    res.render('hesap', { soru: soru.recordset, nickname: kullanici.KullaniciAd, password: kullanici.Sifre, Email: kullanici.Email, reply: kullanici.Cevap, hata: '', nick: req.body.ad, question: kullanici.GuvenlikSorusu });
+                });
+                sql.close();
             });
-
-
         });
     });
 }
@@ -232,19 +244,20 @@ module.exports.hesapupdate = function (req, res) {
 
     sql.connect(webconfig, function (err) {
         var request1 = new sql.Request();
-        request1.query("update kullanici set kullaniciAd='" + req.body.mynickname + "'  , Sifre='"+req.body.mypassword+"',GuvenlikSorusu='"+req.body.Soru+"', Cevap='"+req.body.myreply+"' where KullaniciAd='" + req.session.nick + "' or KullaniciAd='"+req.body.mynickname2+"' ", function (err, hesap) {
+        request1.query("update kullanici set kullaniciAd='" + req.body.mynickname + "'  , Sifre='" + req.body.mypassword + "',GuvenlikSorusu='" + req.body.Soru + "', Cevap='" + req.body.myreply + "' where KullaniciAd='" + req.session.nick + "' or KullaniciAd='" + req.body.mynickname2 + "' ", function (err, hesap) {
             if (err) {
                 console.log(err);
             }
-
-
-            request1.query("select KullaniciAd,Sifre,Email,Cevap from kullanici where KullaniciAd='" + req.body.mynickname + "'", function (err, hesaplar) {
+            request1.query("select * from kullanici where KullaniciAd='" + req.body.mynickname + "'", function (err, hesaplar) {
                 if (err) {
                     console.log(err);
                 }
-                sql.close();
-                hesaplar.recordset.forEach(function (kullanici) {
-                    res.render('hesap', { nickname: kullanici.KullaniciAd, password: kullanici.Sifre, Email: kullanici.Email, reply: kullanici.Cevap ,nick:req.body.mynickname,hata:'Hesabınız başarılı bir şekilde güncellendi'});
+                request1.query("select * from guvenlikSorusu", function (err, soru) {
+
+                    hesaplar.recordset.forEach(function (kullanici) {
+                        res.render('hesap', { soru: soru.recordset, nickname: kullanici.KullaniciAd, password: kullanici.Sifre, Email: kullanici.Email, reply: kullanici.Cevap, hata: 'Hesabınız başarıyla güncellendi', nick: req.body.ad, question: kullanici.GuvenlikSorusu });
+                    });
+                    sql.close();
                 });
             });
         });

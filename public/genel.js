@@ -49,8 +49,17 @@ $(function () {
             '<i class="fas fa-check"></i></span>' + '</li>'
         $('#messages').append($('<div class="clear">'));
     });
+    socket.on('onlineUser', (count) => {
+        $('#onlineUser').text(count);
+    });
 
+    socket.on('DisOnlineUser', (count) => {
+        $('#onlineUser').text(count);
+    })
 
+    socket.on('DisUser', (bos) => {
+        io.emit('odaName', ($('#odaName').text()));
+    })
 
 
 
@@ -103,7 +112,7 @@ function closeNavRight() {
     document.getElementById("mySidenavright").style.width = "0";
     document.getElementById("main").style.marginLeft = "0";
 }
-   
+
 //window.onclick = function (event) {
     //if (event.target.className == 'icerik') {
         //document.getElementById("mySidenav").style.width = "0";
