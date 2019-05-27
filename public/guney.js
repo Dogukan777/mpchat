@@ -135,6 +135,6 @@ function onay(adres) {
     }
     var vazgec = document.getElementById('vazgec');
     vazgec.onclick = function () {
-        location.href = '/genel';
+        location.href = '/guney';
     }
 }
