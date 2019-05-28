@@ -25,36 +25,31 @@ pool2.on('error', err => {
 })
 
 module.exports.memberinsert = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        if (err) console.log(err);
-        var request1 = new sql.Request();
-
-        request1.query("Select dbo.fn_UyeKontrol('" + req.body.KullaniciAd + "','" + req.body.Eposta + "') as UyeKontrol", function (err, Kontrol) {
-            if (err) {
-                console.log(err);
-            }
-
-            Kontrol.recordset.forEach(function (kullanici) {
-                if (kullanici.UyeKontrol == "Evet") {
-                    res.render('UyeOl', { hata: 'Kullanıcı adı veya e posta bulunmaktadır !' });
-                    sql.close();
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query("Select dbo.fn_UyeKontrol('" + req.body.KullaniciAd + "','" + req.body.Eposta + "') as UyeKontrol", function (err, Kontrol) {
+                if (err) {
+                    console.log(err);
                 }
-                else {
-
-                    var request1 = new sql.Request();
-                    request1.query("insert into Kullanici(KullaniciAd,Sifre,Email,GuvenlikSorusu,Cevap) values ('" + req.body.KullaniciAd + "','" + req.body.Sifre + "','" + req.body.Eposta + "','" + req.body.Soru + "','" + req.body.Cevap + "')", function (err, recordset) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        res.render('giris', { hata: '' });
+                Kontrol.recordset.forEach(function (kullanici) {
+                    if (kullanici.UyeKontrol == "Evet") {
+                        res.render('UyeOl', { hata: 'Kullanıcı adı veya e posta bulunmaktadır !' });
                         sql.close();
+                    } else {
+                        pool.request() // or: new sql.Request(pool2)
+                            .query("insert into Kullanici(KullaniciAd,Sifre,Email,GuvenlikSorusu,Cevap) values ('" + req.body.KullaniciAd + "','" + req.body.Sifre + "','" + req.body.Eposta + "','" + req.body.Soru + "','" + req.body.Cevap + "')", function (err, recordset) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                res.render('giris', { hata: '' });
+                                sql.close();
+                            })
+                    }
 
-                    });
-                }
-            });
-
-        });
-
+                })
+            }).catch(err => {
+                // ... error handler
+            })
 
     });
 }
@@ -66,17 +61,18 @@ module.exports.Giris = function (req, res) {
 }
 
 module.exports.HesapSilindi = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        var request1 = new sql.Request();
-   
-        request1.query("delete from kullanici where Id=" + req.params.id + "", function (err, verisonucu) {
-            if (err) {
-                console.log(err);
-            }
-            sql.close();
-            res.render('giris', { hata: '' });
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query("delete from kullanici where Id=" + req.params.id + "", function (err, verisonucu) {
+                if (err) {
+                    console.log(err);
+                }
+                sql.close();
+                res.render('giris', { hata: '' });
 
-        });
+            })
+    }).catch(err => {
+        // ... error handler
     });
 }
 module.exports.GirisYapildi = function (req, res) {
@@ -93,7 +89,7 @@ module.exports.GirisYapildi = function (req, res) {
                         req.session.nick = req.body.ad;
                         pool.request()
                             .query("insert into AktifKullanici values('" + req.body.ad + "',GETDATE())", function (err, recordset) {
-                               
+
                                 if (err) {
                                     console.log(err);
                                 }
@@ -114,7 +110,7 @@ module.exports.GirisYapildi = function (req, res) {
                     }
                     else {
                         res.render('giris', { hata: 'Kullanici Adi veya Şifre Hatalı !' })
-            
+                 
                     }
                 });
             })
@@ -158,7 +154,201 @@ module.exports.msgEkle = async function (msg, nick, oda, req, res) {
     //     console.log('The solution is: ', rows[0].solution);
     // });
 
-}/*
+}
+
+module.exports.getMsgKuzey = function (req, res) {
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Kuzey' and m.userID = k.Id", function (err, mesajlar) {
+                if (err) {
+                    console.log(err);
+                }
+                pool.request() // or: new sql.Request(pool2)
+                    .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        sql.close();
+                        res.render('kuzey', { nick: req.session.nick, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
+                    })
+            });
+    }).catch(err => {
+        // ... error handler
+    })
+
+}
+module.exports.getMsgGuney = function (req, res) {
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Güney' and m.userID = k.Id", function (err, mesajlar) {
+                if (err) {
+                    console.log(err);
+                }
+                pool.request() // or: new sql.Request(pool2)
+                    .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        sql.close();
+                        res.render('guney', { nick: req.session.nick, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
+                    })
+            });
+    }).catch(err => {
+        // ... error handler
+    })
+
+}
+module.exports.getMsgHalic = function (req, res) {
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Haliç' and m.userID = k.Id", function (err, mesajlar) {
+                if (err) {
+                    console.log(err);
+                }
+                pool.request() // or: new sql.Request(pool2)
+                    .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        sql.close();
+                        res.render('halic', { nick: req.session.nick, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
+                    })
+            });
+    }).catch(err => {
+        // ... error handler
+    })
+
+}
+module.exports.getGenel = function (req, res) {
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Genel' and m.userID = k.Id", function (err, mesajlar) {
+                if (err) {
+                    console.log(err);
+                }
+                pool.request() // or: new sql.Request(pool2)
+                    .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        sql.close();
+                        res.render('genel', { nick: req.session.nick, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
+                    })
+            });
+    }).catch(err => {
+        // ... error handler
+    })
+
+}
+module.exports.sifre = function (req, res) {
+    res.render('sifre', { hata: '' });
+}
+module.exports.YeniSifre = function (req, res) {
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query(" Select dbo.fn_SifreYenileme('" + req.body.Email + "','" + req.body.Cevaps + "') as SifreSonuc", function (err, verisonucu) {
+                if (err) {
+                    console.log(err);
+                }
+                verisonucu.recordset.forEach(function (kullanici) {
+                    if (kullanici.SifreSonuc == "Evet") {
+                        res.render('SifreYenileme', { Email: req.body.Email, Cevap: req.body.Cevaps, soru: req.body.soru, hata: '' });
+                    }
+                    else {
+                        res.render('sifre', { hata: 'Lütfen bilgilerinizi kontrol ediniz !' })
+                    }
+                });
+                sql.close();
+            });
+
+    }).catch(err => {
+        // ... error handler
+    })
+
+}
+
+module.exports.sifreUpdate = function (req, res) {
+    if (req.body.password1 != req.body.password2) {
+        res.render('SifreYenileme', { Email: req.body.Email, Cevap: req.body.Cevaps, soru: req.body.soru, hata: 'Şifreler Uyuşmuyor !' });
+    }
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query("update kullanici set Sifre='" + req.body.password1 + "' where Email='" + req.body.Email + "' and Cevap='" + req.body.Cevaps + "'", function (err, verisonucu) {
+                if (err) {
+                    console.log(err);
+                }
+                res.render('giris', { hata: '' })
+                sql.close();
+
+            })
+    }).catch(err => {
+        // ... error handler
+    })
+}
+
+module.exports.hesap = function (req, res) {
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query("select Id,KullaniciAd,Sifre,Email,Cevap,GuvenlikSorusu from kullanici where KullaniciAd='" + req.session.nick + "'  ", function (err, hesap) {
+                if (err) {
+                    console.log(err);
+                }
+                pool.request() // or: new sql.Request(pool2)
+                    .query("select * from guvenlikSorusu", function (err, soru) {
+                        hesap.recordset.forEach(function (kullanici) {
+                            res.render('hesap', { soru: soru.recordset, nickname: kullanici.KullaniciAd, password: kullanici.Sifre, Email: kullanici.Email, reply: kullanici.Cevap, hata: '', nick: req.body.ad, question: kullanici.GuvenlikSorusu, Id2: kullanici.Id });
+                        });
+                        sql.close();
+                    })
+            });
+    }).catch(err => {
+        // ... error handler
+    })
+
+}
+module.exports.hesapupdate = function (req, res) {
+
+    return pool2Connect.then((pool) => {
+        // or: new sql.Request(pool2)
+        pool.request().query("update kullanici set kullaniciAd='" + req.body.mynickname + "'  ,Email='" + req.body.Email + "', Sifre='" + req.body.mypassword + "',GuvenlikSorusu='" + req.body.Soru + "', Cevap='" + req.body.myreply + "' where KullaniciAd='" + req.session.nick + "' or KullaniciAd='" + req.body.mynickname2 + "' ", function (err, hesap) {
+            if (err) {
+                console.log(err);
+            }
+            pool.request().query("select * from kullanici where KullaniciAd='" + req.body.mynickname + "'", function (err, hesaplar) {
+                if (err) {
+                    console.log(err);
+                }
+                pool.request().query("select * from guvenlikSorusu", function (err, soru) {
+                    hesaplar.recordset.forEach(function (kullanici) {
+                        res.render('hesap', { soru: soru.recordset, nickname: kullanici.KullaniciAd, password: kullanici.Sifre, Email: kullanici.Email, reply: kullanici.Cevap, hata: 'Hesabınız başarıyla güncellendi', nick: req.body.ad, question: kullanici.GuvenlikSorusu, Id2: kullanici.Id });
+                    });
+                    sql.close();
+                })
+            });
+        });
+    }).catch(err => {
+        // ... error handler
+    })
+}
+
+
+
+/*
+module.exports.YeniSifre = function (req, res) {
+    sql.connect(webconfig, function (err) {
+        if (err) console.log(err);
+        var request1 = new sql.Request();
+        request1.query("update kullanici set Sifre='" + req.body.password2 + "' where Email='" + req.body.Email + "'  and Cevap='" + req.body.Cevaps + "'", function (err, verisonucu) {
+            if (err) {
+                console.log(err);
+            }
+            res.render('giris',{hata:''});
+             sql.close();
+        });
+    });
+}*/
+
+/*
 module.exports.GirisYapildi = function (req, res) {
     sql.connect(webconfig, function (err) {
         if (err) console.log(err);
@@ -198,155 +388,3 @@ module.exports.GirisYapildi = function (req, res) {
     });
 }
 */
-
-module.exports.getMsgKuzey = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        var request1 = new sql.Request();
-        request1.query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Kuzey' and m.userID = k.Id", function (err, mesajlar) {
-            if (err) {
-                console.log(err);
-            }
-            request1.query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
-                if (err) {
-                    console.log(err);
-                }
-                sql.close();
-                res.render('kuzey', { nick: req.session.nick, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
-            });
-        });
-    });
-}
-module.exports.getMsgGuney = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        var request1 = new sql.Request();
-        request1.query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Güney' and m.userID = k.Id", function (err, mesajlar) {
-            if (err) {
-                console.log(err);
-            } request1.query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
-                if (err) {
-                    console.log(err);
-                }
-                sql.close();
-                res.render('guney', { nick: req.session.nick, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
-            });
-        });
-    });
-}
-module.exports.getMsgHalic = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        var request1 = new sql.Request();
-        request1.query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Haliç' and m.userID = k.Id", function (err, mesajlar) {
-            if (err) {
-                console.log(err);
-            }
-            request1.query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
-                if (err) {
-                    console.log(err);
-                }
-                sql.close();
-                res.render('halic', { nick: req.session.nick, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
-            });
-        });
-    });
-}
-module.exports.getGenel = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        var request1 = new sql.Request();
-        request1.query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Genel' and m.userID = k.Id", function (err, mesajlar) {
-            if (err) {
-                console.log(err);
-            }
-            request1.query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
-                if (err) {
-                    console.log(err);
-                }
-                sql.close();
-                res.render('genel', { nick: req.session.nick, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
-            });
-        });
-    });
-}
-module.exports.sifre = function (req, res) {
-    res.render('sifre', { hata: '' });
-}
-module.exports.YeniSifre = function (req, res) {
-
-    sql.connect(webconfig, function (err) {
-        if (err) console.log(err);
-        var request1 = new sql.Request();
-        request1.query(" Select dbo.fn_SifreYenileme('" + req.body.Email + "','" + req.body.Cevaps + "') as SifreSonuc", function (err, verisonucu) {
-            if (err) {
-                console.log(err);
-            }
-            verisonucu.recordset.forEach(function (kullanici) {
-                if (kullanici.SifreSonuc == "Evet") {
-                    res.render('SifreYenileme', { Email: req.body.Email, Cevap: req.body.Cevaps, soru: req.body.soru, hata: '' });
-                }
-                else {
-                    res.render('sifre', { hata: 'Lütfen bilgilerinizi kontrol ediniz !' })
-                }
-            });
-            sql.close();
-        });
-    });
-}
-
-module.exports.sifreUpdate = function (req, res) {
-    if (req.body.password1 != req.body.password2) {
-        res.render('SifreYenileme', { Email: req.body.Email, Cevap: req.body.Cevaps, soru: req.body.soru, hata: 'Şifreler Uyuşmuyor !' });
-    }
-    sql.connect(webconfig, function (err) {
-        if (err) console.log(err);
-        var request1 = new sql.Request();
-        request1.query("update kullanici set Sifre='" + req.body.password1 + "' where Email='" + req.body.Email + "' and Cevap='" + req.body.Cevaps + "'", function (err, verisonucu) {
-            if (err) {
-                console.log(err);
-            }
-            res.render('giris', { hata: '' })
-            sql.close();
-        });
-    });
-}
-
-module.exports.hesap = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        var request1 = new sql.Request();
-        request1.query("select Id,KullaniciAd,Sifre,Email,Cevap,GuvenlikSorusu from kullanici where KullaniciAd='" + req.session.nick + "'  ", function (err, hesap) {
-            if (err) {
-                console.log(err);
-            }
-            request1.query("select * from guvenlikSorusu", function (err, soru) {
-                hesap.recordset.forEach(function (kullanici) {
-                    res.render('hesap', { soru: soru.recordset, nickname: kullanici.KullaniciAd, password: kullanici.Sifre, Email: kullanici.Email, reply: kullanici.Cevap, hata: '', nick: req.body.ad, question: kullanici.GuvenlikSorusu, Id2: kullanici.Id });
-                });
-                sql.close();
-            });
-        });
-    });
-}
-module.exports.hesapupdate = function (req, res) {
-
-    sql.connect(webconfig, function (err) {
-        var request1 = new sql.Request();
-        request1.query("update kullanici set kullaniciAd='" + req.body.mynickname + "'  , Sifre='" + req.body.mypassword + "',GuvenlikSorusu='" + req.body.Soru + "', Cevap='" + req.body.myreply + "' where KullaniciAd='" + req.session.nick + "' or KullaniciAd='" + req.body.mynickname2 + "' ", function (err, hesap) {
-            if (err) {
-                console.log(err);
-            }
-            request1.query("select * from kullanici where KullaniciAd='" + req.body.mynickname + "'", function (err, hesaplar) {
-                if (err) {
-                    console.log(err);
-                }
-                request1.query("select * from guvenlikSorusu", function (err, soru) {
-
-                    hesaplar.recordset.forEach(function (kullanici) {
-                        res.render('hesap', { soru: soru.recordset, nickname: kullanici.KullaniciAd, password: kullanici.Sifre, Email: kullanici.Email, reply: kullanici.Cevap, hata: 'Hesabınız başarıyla güncellendi', nick: req.body.ad, question: kullanici.GuvenlikSorusu, Id2: kullanici.Id });
-                    });
-                    sql.close();
-                });
-            });
-        });
-
-
-    });
-
-}
