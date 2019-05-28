@@ -1,8 +1,8 @@
 $(function () {
-    $("#icerik").height(window.innerHeight - 120 + 'px');
+    $("#icerik").height(window.innerHeight - 90 + 'px');
     $('#icerik').scrollTop($('#icerik')[0].scrollHeight);
     $(window).resize(function () {
-        $("#icerik").height(window.innerHeight - 120 + 'px');
+        $("#icerik").height(window.innerHeight - 90 + 'px');
     });
     scrollingElement = (document.scrollingElement || document.body)
     $(scrollingElement).animate({
@@ -124,6 +124,6 @@ function onay(adres) {
     }
     var vazgec = document.getElementById('vazgec');
     vazgec.onclick = function () {
-        location.href = '/kuzey';
+        modalim.style.display = 'none';
     }
 }

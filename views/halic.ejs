@@ -17,7 +17,7 @@
         <nav class="navbar is-fixed-top" role="navigation" aria-label="dropdown navigation">
             <span style="font-size:25px;cursor:pointer" onclick="openNav()">&#9776;</span>
             <a class="subtitle is-4">MpChat</a><a class="subtitle is-6" id=odaName> Haliç</a>
-            <div id="nick"></div>
+            <div id="nick" style="display:none"></div>
         </nav>
         <div class="columns level-left">
 
@@ -29,12 +29,12 @@
                 <a href="/guney" id="guney">Güney</a>
                 <a href="/halic" id="halic">Haliç</a>
                 <a style="float: right;" class="subtitle is-5">Aktif : <span id="onlineUser"></span></a><br>
-                <a href="/oneri">Öneride Bulun</a>
                 <a href="/hesap">Hesap Bilgilerim</a>
             
                 <% kullanici.forEach(function(user){ %>
                     <a name="/<%= user.Id %>" onclick="onay(this.name)">Hesabımı Sil</a>
                 <% }); %>
+                <a href="/oneri">Öneride Bulun</a>
                 <a href="/" id="Cikis">Çıkış</a>
             </div>
 
@@ -86,7 +86,6 @@
                     </p>
                     <a href="#" class="card-header-icon" aria-label="more options">
                         <span class="icon">
-                            <i class="fas fa-angle-down" aria-hidden="true"></i>
                         </span>
                     </a>
                 </header>

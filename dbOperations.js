@@ -110,7 +110,7 @@ module.exports.GirisYapildi = function (req, res) {
                     }
                     else {
                         res.render('giris', { hata: 'Kullanici Adi veya Şifre Hatalı !' })
-                 
+                        sql.close();
                     }
                 });
             })
@@ -154,7 +154,46 @@ module.exports.msgEkle = async function (msg, nick, oda, req, res) {
     //     console.log('The solution is: ', rows[0].solution);
     // });
 
+}/*
+module.exports.GirisYapildi = function (req, res) {
+    sql.connect(webconfig, function (err) {
+        if (err) console.log(err);
+        var request1 = new sql.Request();
+        request1.query("Select dbo.fn_UyeVarmi('" + req.body.ad + "','" + req.body.sifre + "') as Sonuc", function (err, verisonucu) {
+            if (err) {
+                console.log(err);
+            }
+            verisonucu.recordset.forEach(function (kullanici) {
+                if (kullanici.Sonuc == "Evet") {
+                    req.session.nick = req.body.ad;
+                    var request1 = new sql.Request();
+                    request1.query("insert into AktifKullanici values('" + req.body.ad + "',GETDATE())", function (err, recordset) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        request1.query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Genel' and m.userID = k.Id", function (err, mesajlar) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            request1.query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                sql.close();
+                                res.render('genel', { nick: req.body.ad, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
+                            });
+                        });
+                    });
+                }
+                else {
+                    res.render('giris', { hata: 'Kullanici Adi veya Şifre Hatalı !' })
+                    sql.close();
+                }
+            });
+        });
+    });
 }
+*/
 
 module.exports.getMsgKuzey = function (req, res) {
     return pool2Connect.then((pool) => {
@@ -331,6 +370,59 @@ module.exports.hesapupdate = function (req, res) {
     })
 }
 
+module.exports.GetOneri = function (req, res) {
+
+    return pool2Connect.then((pool) => {
+        // or: new sql.Request(pool2)
+        pool.request() // or: new sql.Request(pool2)
+        .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+            if (err) {
+                console.log(err);
+            }
+            sql.close();
+            res.render('oneri', { nick: req.session.nick,  kullanici: kullanicilar.recordset,hata:'' });
+        })
+    }).catch(err => {
+        // ... error handler
+    })
+}
+module.exports.PostOneri = function (req, res) {
+
+    return pool2Connect.then((pool) => {
+        // or: new sql.Request(pool2)
+        pool.request() // or: new sql.Request(pool2)
+        .query("insert into Oneriler Values('"+req.body.oneri+"','"+req.body.konu+"',(select Id from kullanici where KullaniciAd='"+req.session.nick+"'),GETDATE(),'Oneriler')", function (err, kullanicilar) {
+            if (err) {
+                console.log(err);
+            }
+            pool.request()
+            .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+                if (err) {
+                    console.log(err);
+                }
+            
+            res.render('oneri', { nick: req.session.nick,  kullanici: kullanicilar.recordset,hata:'İletiniz başarıyla gönderilmiştir.' });
+        })
+    })
+    }).catch(err => {
+        // ... error handler
+    })
+}
+/*
+module.exports.sil = function (req, res) {
+    sql.connect(webconfig, function (err) {
+        if (err) console.log(err);
+        var request1 = new sql.Request();
+        request1.query("delete from kullanici where Id="+req.params.id+"", function (err, verisonucu) {
+            if (err) {
+                console.log(err);
+            }
+        });
+            res.render('giris',{hata:''});
+      sql.close();
+    });
+}
+*/
 
 
 /*
@@ -347,44 +439,3 @@ module.exports.YeniSifre = function (req, res) {
         });
     });
 }*/
-
-/*
-module.exports.GirisYapildi = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        if (err) console.log(err);
-        var request1 = new sql.Request();
-        request1.query("Select dbo.fn_UyeVarmi('" + req.body.ad + "','" + req.body.sifre + "') as Sonuc", function (err, verisonucu) {
-            if (err) {
-                console.log(err);
-            }
-            verisonucu.recordset.forEach(function (kullanici) {
-                if (kullanici.Sonuc == "Evet") {
-                    req.session.nick = req.body.ad;
-                    var request1 = new sql.Request();
-                    request1.query("insert into AktifKullanici values('" + req.body.ad + "',GETDATE())", function (err, recordset) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        request1.query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Genel' and m.userID = k.Id", function (err, mesajlar) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            request1.query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                                sql.close();
-                                res.render('genel', { nick: req.body.ad, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
-                            });
-                        });
-                    });
-                }
-                else {
-                    res.render('giris', { hata: 'Kullanici Adi veya Şifre Hatalı !' })
-                    sql.close();
-                }
-            });
-        });
-    });
-}
-*/

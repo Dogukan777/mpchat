@@ -34,9 +34,9 @@ app.get('/hesap', login.hesap);
 app.post('/hesapupdate', login.hesapupdate);
 
 app.get('/hesap/:id', login.HesapSilindi);
+app.get('/oneri',login.GetOneri);
 
-
-
+app.post('/oneri',login.PostOneri);
 
 const port = process.env.PORT || 3000;
 server = app.listen(port);
