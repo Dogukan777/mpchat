@@ -52,6 +52,15 @@ $(function () {
     socket.on('onlineUser', (count) => {
         $('#onlineUser').text(count);
     });
+    $("h6").click(function (e) {
+       $('label').toggle();//Toggle gizliyse gosterir açıksa kapatır
+    });
+
+
+
+
+
+
 
 
 
@@ -96,10 +105,10 @@ function closeNav() {
 }
 
 //window.onclick = function (event) {
-    //if (event.target.className == 'icerik') {
-        //document.getElementById("mySidenav").style.width = "0";
-        //document.getElementById("main").style.marginLeft = "0";
-   // }
+//if (event.target.className == 'icerik') {
+//document.getElementById("mySidenav").style.width = "0";
+//document.getElementById("main").style.marginLeft = "0";
+// }
 //}
 
 
