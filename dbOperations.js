@@ -68,6 +68,7 @@ module.exports.Giris = function (req, res) {
 module.exports.HesapSilindi = function (req, res) {
     sql.connect(webconfig, function (err) {
         var request1 = new sql.Request();
+   
         request1.query("delete from kullanici where Id=" + req.params.id + "", function (err, verisonucu) {
             if (err) {
                 console.log(err);
@@ -113,7 +114,7 @@ module.exports.GirisYapildi = function (req, res) {
                     }
                     else {
                         res.render('giris', { hata: 'Kullanici Adi veya Şifre Hatalı !' })
-                        sql.close();
+            
                     }
                 });
             })
@@ -349,39 +350,3 @@ module.exports.hesapupdate = function (req, res) {
     });
 
 }
-/*
-module.exports.sil = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        if (err) console.log(err);
-        var request1 = new sql.Request();
-        request1.query("delete from kullanici where Id="+req.params.id+"", function (err, verisonucu) {
-            if (err) {
-                console.log(err);
-            }
-        });
-
-
-            res.render('giris',{hata:''});
-      sql.close();
-    });
-}
-
-*/
-
-
-/*
-module.exports.YeniSifre = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        if (err) console.log(err);
-        var request1 = new sql.Request();
-        request1.query("update kullanici set Sifre='" + req.body.password2 + "' where Email='" + req.body.Email + "'  and Cevap='" + req.body.Cevaps + "'", function (err, verisonucu) {
-            if (err) {
-                console.log(err);
-            }
-
-            res.render('giris',{hata:''});
-             sql.close();
-        });
-
-    });
-}*/

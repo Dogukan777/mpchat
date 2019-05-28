@@ -33,7 +33,9 @@ app.get('/halic', login.getMsgHalic);
 app.get('/hesap', login.hesap);
 app.post('/hesapupdate', login.hesapupdate);
 
-app.get('/:id', login.HesapSilindi);
+app.get('/hesap/:id', login.HesapSilindi);
+
+
 
 
 const port = process.env.PORT || 3000;
