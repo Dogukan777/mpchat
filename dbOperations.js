@@ -415,7 +415,7 @@ module.exports.GetOneri = function (req, res) {
         req.session.no = req.body.no
         // or: new sql.Request(pool2)
         pool.request() // or: new sql.Request(pool2)
-            .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
                 if (err) {
                     console.log(err);
                 }
@@ -452,7 +452,7 @@ module.exports.GetAdmin = function (req, res) {
     return pool2Connect.then((pool) => {
 
         pool.request() // or: new sql.Request(pool2)
-            .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
                 if (err) {
                     console.log(err);
                 }
@@ -471,7 +471,7 @@ module.exports.GetAdminOneriler = function (req, res) {
     return pool2Connect.then((pool) => {
         // or: new sql.Request(pool2)
         pool.request() // or: new sql.Request(pool2)
-            .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
                 if (err) {
                     console.log(err);
                 }
@@ -568,21 +568,66 @@ module.exports.PostAdminOneriGorus = function (req, res) {
     })
 }
 
-/*
-module.exports.sil = function (req, res) {
-    sql.connect(webconfig, function (err) {
-        if (err) console.log(err);
-        var request1 = new sql.Request();
-        request1.query("delete from kullanici where Id="+req.params.id+"", function (err, verisonucu) {
+
+module.exports.AdminHesap = function (req, res) {
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query("select Id,KullaniciAd,Sifre,Email,Cevap,GuvenlikSorusu from Adminler where KullaniciAd='" + req.session.nick + "'  ", function (err, hesap) {
+                if (err) {
+                    console.log(err);
+                }
+                pool.request() // or: new sql.Request(pool2)
+                    .query("select * from guvenlikSorusu", function (err, soru) {
+                        hesap.recordset.forEach(function (kullanici) {
+                            res.render('adminhesap', { soru: soru.recordset, nickname: kullanici.KullaniciAd, password: kullanici.Sifre, Email: kullanici.Email, reply: kullanici.Cevap, hata: '', nick: req.body.ad, question: kullanici.GuvenlikSorusu, Id2: kullanici.Id });
+                        });
+                        sql.close();
+                    })
+            });
+    }).catch(err => {
+        // ... error handler
+    })
+
+}
+module.exports.AdminHesapUpdate = function (req, res) {
+
+    return pool2Connect.then((pool) => {
+        // or: new sql.Request(pool2)
+        pool.request().query("update Adminler set kullaniciAd='" + req.body.mynickname + "'  ,Email='" + req.body.Email + "', Sifre='" + req.body.mypassword + "',GuvenlikSorusu='" + req.body.Soru + "', Cevap='" + req.body.myreply + "' where KullaniciAd='" + req.session.nick + "' or KullaniciAd='" + req.body.mynickname2 + "' ", function (err, hesap) {
             if (err) {
                 console.log(err);
             }
+            pool.request().query("select * from Adminler where KullaniciAd='" + req.body.mynickname + "'", function (err, hesaplar) {
+                if (err) {
+                    console.log(err);
+                }
+                pool.request().query("select * from guvenlikSorusu", function (err, soru) {
+                    hesaplar.recordset.forEach(function (kullanici) {
+                        res.render('adminhesap', { soru: soru.recordset, nickname: kullanici.KullaniciAd, password: kullanici.Sifre, Email: kullanici.Email, reply: kullanici.Cevap, hata: 'Hesabınız başarıyla güncellendi', nick: req.body.ad, question: kullanici.GuvenlikSorusu, Id2: kullanici.Id });
+                    });
+                    sql.close();
+                })
+            });
         });
-            res.render('giris',{hata:''});
-      sql.close();
+    }).catch(err => {
+        // ... error handler
+    })
+}
+module.exports.AdminHesapSilindi = function (req, res) {
+    return pool2Connect.then((pool) => {
+        pool.request() // or: new sql.Request(pool2)
+            .query("delete from Adminler where Id=" + req.params.id + "", function (err, verisonucu) {
+                if (err) {
+                    console.log(err);
+                }
+                sql.close();
+                res.render('giris', { hata: '' });
+
+            })
+    }).catch(err => {
+        // ... error handler
     });
 }
-*/
 
 
 /*

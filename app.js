@@ -43,6 +43,9 @@ app.get('/AdminOneriler',login.GetAdminOneriler);
 app.post('/AdminOneriler',login.PostAdminOneriler);
 app.get('/AdminOneriGorus',login.GetAdminOneriGorus);
 app.post('/AdminOneriGorus',login.PostAdminOneriGorus);
+app.get('/adminhesap', login.AdminHesap)
+app.post('/adminhesapupdate', login.AdminHesapUpdate);
+app.get('/adminhesap/:id', login.AdminHesapSilindi);
 /*
 app.get('/AdminOneriGorus',login.GetAdminOneriGorus);*/
 const port = process.env.PORT || 3000;
