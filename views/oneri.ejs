@@ -35,7 +35,7 @@
                 <a style="float: right;" class="subtitle is-5">Aktif : <span id="onlineUser"></span></a><br>
                 <a href="/hesap">Hesap Bilgilerim</a>
                 <% kullanici.forEach(function(user){ %>
-                    <a name="/adminhesap/<%= user.Id %>" onclick="onay(this.name)">Hesabımı Sil</a>
+                    <a name="/hesap/<%= user.Id %>" onclick="onay(this.name)">Hesabımı Sil</a>
                 <% }); %>
                 <a href="/oneri">Öneride Bulun</a>
                 <a href="/" id="Cikis">Çıkış</a>
