@@ -10,66 +10,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
         integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     <title>Oneriler</title>
-    <style>
-    .sidenav {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 30;
-            top: 0;
-            left: 0;
-            background-color: #111;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-       
-      
-      
-
-        .sidenav a {
-            padding: 8px 8px 8px 32px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #818181;
-            display: block;
-            transition: 0.3s;
-        }
-        .sidenavright {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 30;
-            top: 0;
-            left: 0;
-            background-color: #111;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-         
-        }
-        .sidenavright a {
-            padding: 8px 8px 8px 32px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #818181;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidenav a:hover {
-            color: #f1f1f1;
-        }
-
-        .sidenav .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-</style>
-
+   
 </head>
 
 <body>
@@ -136,6 +77,33 @@
                         </div>
                         
                         <% }); %>
+                        <% Sikayetler2.forEach(function(Sikayet){ %>
+                            <div class="list is-hoverable",>
+        
+                                    <a class="list-item" style="padding:2%;">
+                                            <label class="label">Kullanıcı: </label>
+                                            <input class="input" id="username" name="kullanici" type="text"
+                                                value="  <%= Sikayet.nick %>">
+                                            <label class="label">Oda Adı:</label>
+                                            <input class="input" id="username" name="konu" type="text" value=" <%= Sikayet.odaAdi  %>">
+                                            <form action="/AdminSikayetler" method="POST">
+                                            <input class="input"  type="text"  name="sikayetNo" value=" <%= Sikayet.Id  %>">
+                           
+                                
+                                            <label class="label" style="margin:5px 0px 5px 0px;">Mesaj:</label>
+                                                <textarea class="textarea is-info"  style="resize: none;" name="oneri"><%= Sikayet.mesaj  %></textarea>
+                                              
+                                     
+                                             
+                                              
+                                                <button type="submit" class="button is-danger" style="margin-top:10px;margin-left:15px">Kullanıcıyı Banla</button>
+                                           
+                                            </form>
+                                          </a>
+                                        
+                                </div>
+                                
+                                <% }); %>
                     </div>
                 </div>
 
@@ -178,7 +146,7 @@
     </div>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
-    <script src="oneri.js"></script>
+    <script src="AdminSikayetler.js"></script>
    
 </body>
 <script>

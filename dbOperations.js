@@ -759,10 +759,16 @@ module.exports.GetAdminSikayetler = function (req, res) {
                         if (err) {
                             console.log(err);
                         }
+                        pool.request() // or: new sql.Request(pool2)
+                        .query("select k.Id,nick,mesaj,odaAdi from sikayetMsj s,kullanici k where mesaj like '%%' and k.KullaniciAd=s.nick ", function (err, Liste2) {
+                            if (err) {
+                                console.log(err);
+                            }
 
 
-                        res.render('AdminSikayetler', { nick: req.session.nick, kullanici: kullanicilar.recordset, hata: '', Sikayetler: Liste.recordset });
+                        res.render('AdminSikayetler', { nick: req.session.nick, kullanici: kullanicilar.recordset, hata: '', Sikayetler: Liste.recordset,Sikayetler2:Liste2.recordset });
                     });
+                });
             });
     }).catch(err => {
         // ... error handler
@@ -795,10 +801,16 @@ module.exports.AdminSikayetBan = function (req, res) {
                                         if (err) {
                                             console.log(err);
                                         }
+                                        pool.request() // or: new sql.Request(pool2)
+                                        .query("select k.Id,nick,mesaj,odaAdi from sikayetMsj s,kullanici k where mesaj like '%%' and k.KullaniciAd=s.nick ", function (err, Liste2) {
+                                            if (err) {
+                                                console.log(err);
+                                            }
 
 
-                                        res.render('AdminSikayetler', { nick: req.session.nick, kullanici: kullanicilar.recordset, hata: '', Sikayetler: Liste.recordset });
+                                        res.render('AdminSikayetler', { nick: req.session.nick, kullanici: kullanicilar.recordset, hata: '', Sikayetler: Liste.recordset,Sikayetler2:Liste2.recordset });
                                     });
+                                });
                             });
                     });
             });
