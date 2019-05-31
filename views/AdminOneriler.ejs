@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="overflow: auto">
 
 <head>
     <meta charset="UTF-8">
@@ -27,57 +27,57 @@
             <div id="mySidenav" class="sidenav">
 
                 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                <a class="subtitle is-3">Oda Seçimi</a>
-                <a href="/genel" id="genel">Genel</a>
-                <a href="/kuzey" id="kuzey">Kuzey</a>
-                <a href="/guney" id="guney">Güney</a>
-                <a href="/halic" id="halic">Haliç</a>
+    
+                <a href="/admin" id="genel">Anasayfa</a>
+               
                 <a style="float: right;" class="subtitle is-5">Aktif : <span id="onlineUser"></span></a><br>
-                <a href="/hesap">Hesap Bilgilerim</a>
-                <% kullanici.forEach(function(user){ %>
-                <a name="/hesap/<%= user.Id %>" onclick="onay(this.name)">Hesabımı Sil</a>
-                <% }); %>
                 <a href="/AdminOneriler">Öneriler</a>
+                <a href="/adminhesap">Hesap Bilgilerim</a>
+                <% kullanici.forEach(function(user){ %>
+                <a name="/adminhesap/<%= user.Id %>" onclick="onay(this.name)">Hesabımı Sil</a>
+                <% }); %>
+        
                 <a href="/" id="Cikis">Çıkış</a>
 
             </div>
 
+
         </div>
 
 
-        <div class="icerik" id="icerik">
-            <div class="container box" style="padding:10px; margin-top:50px; padding: 3%;">
-                <h3 class="subtitle is-3">Öneri ve Görüşler</h3>
-                <div id="liste">
-                    <% Oneriler.forEach(function(Oneriler){ %>
-                    <div class="list is-hoverable" ,>
+        <div class="container box" style="margin-top:4%; padding: 3%">
+            <h3 class="subtitle is-3">Öneri ve Görüşler</h3>
+            <div id="liste">
+                <% Oneriler.forEach(function(Oneriler){ %>
 
-                        <a class="list-item">
+                <div class="list is-hoverable">
 
-                            <label class="label">Kullanıcı: </label>
-                            <input class="input" id="username" name="kullanici" type="text"
-                                value="  <%= Oneriler.KullaniciAd %>">
-                            <label class="label">Konu:</label>
-                            <input class="input" id="username" name="konu" type="text" value=" <%= Oneriler.konu  %>">
-                            <form action="/AdminOneriler" method="POST">
-                                <input class="input" id="username" name="no" type="text" value="<%= Oneriler.Id  %>" style="display:none">
-                     
+                    <a class="list-item">
 
-                                <button type="submit" class="button is-link" style="margin:15px;"
-                                    onclick="Goster()">Göster</button>
+                        <label class="label">Kullanıcı: </label>
+                        <input class="input" id="username" name="kullanici" type="text"
+                            value="  <%= Oneriler.KullaniciAd %>">
+                        <label class="label">Konu:</label>
+                        <input class="input" id="username" name="konu" type="text" value=" <%= Oneriler.konu  %>">
+                        <form action="/AdminOneriler" method="POST">
+                            <input class="input" id="username" name="no" type="text" value="<%= Oneriler.Id  %>"
+                                style="display:none">
 
-                            </form>
-             
 
-                        </a>
+                            <button type="submit" class="button is-link" style="margin:15px;"
+                                onclick="Goster()">Göster</button>
 
-                    </div>
-                    <% }); %>
+                        </form>
+
+
+                    </a>
+
                 </div>
+                <% }); %>
             </div>
-
-
         </div>
+
+
 
     </div>
 
@@ -119,7 +119,7 @@
     <script src="dbOperations.js"></script>
     <script>
         localStorage.setItem('Ad', document.getElementById('nick').innerHTML)
-       
+
     </script>
 </body>
 

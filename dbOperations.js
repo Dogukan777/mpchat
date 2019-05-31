@@ -47,11 +47,12 @@ module.exports.memberinsert = function (req, res) {
                     }
 
                 })
-            }).catch(err => {
-                // ... error handler
-            })
+            });
 
-    });
+    }).catch(err => {
+        // ... error handler
+    })
+
 }
 module.exports.UyeOl = function (req, res) {
     res.render('UyeOl', { hata: '' });
@@ -61,6 +62,9 @@ module.exports.Giris = function (req, res) {
 }
 
 module.exports.HesapSilindi = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         pool.request() // or: new sql.Request(pool2)
             .query("delete from kullanici where Id=" + req.params.id + "", function (err, verisonucu) {
@@ -78,6 +82,7 @@ module.exports.HesapSilindi = function (req, res) {
 module.exports.GirisYapildi = function (req, res) {
 
     return pool2Connect.then((pool) => {
+        
         pool.request() // or: new sql.Request(pool2)
             .query("Select dbo.fn_AdminVarmi('" + req.body.ad + "','" + req.body.sifre + "') as Sonuc", function (err, verisonucu) {
                 if (err) {
@@ -91,6 +96,7 @@ module.exports.GirisYapildi = function (req, res) {
                                 if (err) {
                                     console.log(err);
                                 }
+                                req.session.sheld = true;
                                 res.render('admin', { nick: req.body.ad, kullanici: kullanicilar.recordset });
                             });
                     }
@@ -116,6 +122,7 @@ module.exports.GirisYapildi = function (req, res) {
                                             if (err) {
                                                 console.log(err);
                                             }
+                                            req.session.sheld = true;
                                             res.render('admin', { nick: req.body.ad, kullanici: kullanicilar.recordset });
                                         });
                                 }
@@ -138,6 +145,7 @@ module.exports.GirisYapildi = function (req, res) {
                                                             if (err) {
                                                                 console.log(err);
                                                             }
+                                                            req.session.sheld = true;
                                                             res.render('genel', { nick: req.body.ad, mesajlar: mesajlar.recordset, kullanici: kullanicilar.recordset });
                                                         });
                                                 });
@@ -234,6 +242,9 @@ module.exports.GirisYapildi = function (req, res) {
 */
 
 module.exports.getMsgKuzey = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         pool.request() // or: new sql.Request(pool2)
             .query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Kuzey' and m.userID = k.Id", function (err, mesajlar) {
@@ -255,6 +266,9 @@ module.exports.getMsgKuzey = function (req, res) {
 
 }
 module.exports.getMsgGuney = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         pool.request() // or: new sql.Request(pool2)
             .query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Güney' and m.userID = k.Id", function (err, mesajlar) {
@@ -276,6 +290,9 @@ module.exports.getMsgGuney = function (req, res) {
 
 }
 module.exports.getMsgHalic = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         pool.request() // or: new sql.Request(pool2)
             .query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Haliç' and m.userID = k.Id", function (err, mesajlar) {
@@ -297,6 +314,9 @@ module.exports.getMsgHalic = function (req, res) {
 
 }
 module.exports.getGenel = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         pool.request() // or: new sql.Request(pool2)
             .query("select m.Id,m.msg,m.userID,convert(varchar, getdate(), 105) as eklenmeTarihi,m.odaAdi,k.Id,k.KullaniciAd from Mesajlar m,kullanici k where odaAdi = 'Genel' and m.userID = k.Id", function (err, mesajlar) {
@@ -364,6 +384,9 @@ module.exports.sifreUpdate = function (req, res) {
 }
 
 module.exports.hesap = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         pool.request() // or: new sql.Request(pool2)
             .query("select Id,KullaniciAd,Sifre,Email,Cevap,GuvenlikSorusu from kullanici where KullaniciAd='" + req.session.nick + "'  ", function (err, hesap) {
@@ -409,6 +432,9 @@ module.exports.hesapupdate = function (req, res) {
 }
 
 module.exports.GetOneri = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
 
     return pool2Connect.then((pool) => {
         req.session.no = req.body.no
@@ -448,10 +474,13 @@ module.exports.PostOneri = function (req, res) {
     })
 }
 module.exports.GetAdmin = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
 
         pool.request() // or: new sql.Request(pool2)
-            .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
                 if (err) {
                     console.log(err);
                 }
@@ -466,11 +495,13 @@ module.exports.GetAdmin = function (req, res) {
 }
 
 module.exports.GetAdminOneriler = function (req, res) {
-
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         // or: new sql.Request(pool2)
         pool.request() // or: new sql.Request(pool2)
-            .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
                 if (err) {
                     console.log(err);
                 }
@@ -494,7 +525,7 @@ module.exports.PostAdminOneriler = function (req, res) {
         req.session.no = req.body.no
         // or: new sql.Request(pool2)
         pool.request() // or: new sql.Request(pool2)
-            .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
                 if (err) {
                     console.log(err);
                 }
@@ -515,11 +546,14 @@ module.exports.PostAdminOneriler = function (req, res) {
     })
 }
 module.exports.GetAdminOneriGorus = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         req.session.no = req.body.no
         // or: new sql.Request(pool2)
         pool.request() // or: new sql.Request(pool2)
-            .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
                 if (err) {
                     console.log(err);
                 }
@@ -538,9 +572,12 @@ module.exports.GetAdminOneriGorus = function (req, res) {
     })
 }
 module.exports.PostAdminOneriGorus = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         pool.request() // or: new sql.Request(pool2)
-            .query("select * from kullanici where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
                 if (err) {
                     console.log(err);
                 }
@@ -598,7 +635,21 @@ module.exports.sikayetEt = function (msgId, req, res) {
     return pool2Connect.then((pool) => {
 
         pool.request() // or: new sql.Request(pool2)
-            .query("insert into sikayetMsj VALUES (" + msgId + ")", function (err, data) {
+            .query("insert into sikayetMsj(mesajId) VALUES (" + msgId + ")", function (err, data) {
+                if (err) {
+                    console.log(err);
+                }
+            });
+
+    }).catch(err => {
+        // ... error handler
+    })
+}
+module.exports.sikayetEtADD = function (nick, msg, odaAdi, req, res) {
+    return pool2Connect.then((pool) => {
+
+        pool.request() // or: new sql.Request(pool2)
+            .query("insert into sikayetMsj(nick,mesaj,odaAdi) VALUES ('" + nick + "','" + msg + "','" + odaAdi + "')", function (err, data) {
                 if (err) {
                     console.log(err);
                 }
@@ -610,6 +661,9 @@ module.exports.sikayetEt = function (msgId, req, res) {
 }
 
 module.exports.AdminHesap = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         pool.request() // or: new sql.Request(pool2)
             .query("select Id,KullaniciAd,Sifre,Email,Cevap,GuvenlikSorusu from Adminler where KullaniciAd='" + req.session.nick + "'  ", function (err, hesap) {
@@ -630,7 +684,9 @@ module.exports.AdminHesap = function (req, res) {
 
 }
 module.exports.AdminHesapUpdate = function (req, res) {
-
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
     return pool2Connect.then((pool) => {
         // or: new sql.Request(pool2)
         pool.request().query("update Adminler set kullaniciAd='" + req.body.mynickname + "'  ,Email='" + req.body.Email + "', Sifre='" + req.body.mypassword + "',GuvenlikSorusu='" + req.body.Soru + "', Cevap='" + req.body.myreply + "' where KullaniciAd='" + req.session.nick + "' or KullaniciAd='" + req.body.mynickname2 + "' ", function (err, hesap) {
@@ -668,7 +724,70 @@ module.exports.AdminHesapSilindi = function (req, res) {
         // ... error handler
     });
 }
+module.exports.GetAdminSikayetler = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
+    return pool2Connect.then((pool) => {
+        req.session.no = req.body.no
+        // or: new sql.Request(pool2)
+        pool.request() // or: new sql.Request(pool2)
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+                if (err) {
+                    console.log(err);
+                }
+                pool.request() // or: new sql.Request(pool2)
+                    .query("select userId,msg,KullaniciAd,m.odaAdi from sikayetMsj s,Mesajlar m,kullanici k where s.mesajId=m.Id and m.userId=k.Id ", function (err, Liste) {
+                        if (err) {
+                            console.log(err);
+                        }
 
+
+                        res.render('AdminSikayetler', { nick: req.session.nick, kullanici: kullanicilar.recordset, hata: '', Sikayetler: Liste.recordset });
+                    });
+            });
+    }).catch(err => {
+        // ... error handler
+    })
+}
+module.exports.AdminSikayetBan = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
+    return pool2Connect.then((pool) => {
+        req.session.no = req.body.no
+        // or: new sql.Request(pool2)
+        pool.request() // or: new sql.Request(pool2)
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+                if (err) {
+                    console.log(err);
+                }
+                pool.request() // or: new sql.Request(pool2)
+                    .query("insert into BanlananKullanicilar values((select KullaniciAd from kullanici where Id="+req.body.sikayetNo+"))", function (err, banla) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        pool.request() // or: new sql.Request(pool2)
+                        .query("delete from kullanici where Id=(select Id from kullanici where Id="+req.body.sikayetNo+")", function (err, banla) {
+                            if (err) {
+                                console.log(err);
+                            }
+                        pool.request() // or: new sql.Request(pool2)
+                            .query("select userId, msg,KullaniciAd,m.odaAdi from sikayetMsj s,Mesajlar m,kullanici k where s.mesajId=m.Id and m.userId=k.Id ", function (err, Liste) {
+                                if (err) {
+                                    console.log(err);
+                                }
+
+
+                                res.render('AdminSikayetler', { nick: req.session.nick, kullanici: kullanicilar.recordset, hata: '', Sikayetler: Liste.recordset });
+                            });
+                        });
+                    });
+            });
+    }).catch(err => {
+        // ... error handler
+    })
+}
 /*
 module.exports.sil = function (req, res) {
     sql.connect(webconfig, function (err) {

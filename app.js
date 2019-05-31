@@ -11,7 +11,7 @@ app.use(bp.urlencoded({ extended: true }));
 app.use(session({
     secret: 'Özel-Anahtar',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
 }));
 
 app.post('/giris', login.GirisYapildi);
@@ -31,6 +31,9 @@ app.get('/guney', login.getMsgGuney);
 app.get('/halic', login.getMsgHalic);
 app.get('/hesap', login.hesap);
 app.post('/hesapupdate', login.hesapupdate);
+app.get('/hesapupdate', login.Giris);
+app.get('/giris', login.Giris);
+
 
 app.get('/hesap/:id', login.HesapSilindi);
 app.get('/oneri', login.GetOneri);
@@ -45,6 +48,8 @@ app.post('/AdminOneriGorus', login.PostAdminOneriGorus);
 app.get('/adminhesap', login.AdminHesap)
 app.post('/adminhesapupdate', login.AdminHesapUpdate);
 app.get('/adminhesap/:id', login.AdminHesapSilindi);
+app.get('/AdminSikayetler', login.GetAdminSikayetler);
+app.post('/AdminSikayetler', login.AdminSikayetBan);
 /*
 app.get('/AdminOneriGorus',login.GetAdminOneriGorus);*/
 const port = process.env.PORT || 3000;
@@ -59,6 +64,7 @@ io.sockets.on('connection', (socket) => {
         socket.join(data);
         console.log('New connect ' + data)
     })
+
     socket.on('sil', (data) => {
         login.silMsg(data.nick, data.msg, data.oda);
     })
@@ -67,6 +73,9 @@ io.sockets.on('connection', (socket) => {
     })
     socket.on('sikayetEt', (data) => {
         login.sikayetEt(data);
+    })
+    socket.on('sikayetEtADD', (data) => {
+        login.sikayetEtADD(data.nick, data.msg, data.oda);
     })
 
 
