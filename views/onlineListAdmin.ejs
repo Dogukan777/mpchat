@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="overflow: auto">
 
 <head>
     <meta charset="UTF-8">
@@ -9,25 +9,27 @@
     <link rel="stylesheet" href="main.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
         integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
-    <title>Genel</title>
+    <title>Oneriler</title>
 </head>
 
 <body>
+
     <div id="ana">
+
 
         <nav class="navbar is-fixed-top" role="navigation" aria-label="dropdown navigation">
             <span style="font-size:25px;cursor:pointer;float:left" onclick="openNav()">&#9776;</span>
-            <a class="subtitle is-4">MpChat</a><a class="subtitle is-6"> Admin Paneli</a>
-            <div id="nick" style="display:none"><%=nick%></div>
+            <a class="subtitle is-4">MpChat</a>
+            <div id="nick" style="display:none"></div>
         </nav>
 
         <div class="columns level-left">
+
             <div id="mySidenav" class="sidenav">
 
                 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                <a href="/admin" class="subtitle is-3">Admin Paneli</a>
-                <a  href="/AdminUyeList" >Üye Listesi</a>
-                <a  href="/AdminBanList" >Banlanan Kullanıcılar</a>
+                <a class="subtitle is-3">Admin Paneli</a>
+                <a href="/admin" id="genel">Üye Listesi</a>
                 <a href="/AdminSikayetler">Şikayetler</a>
                 <a href="/AdminOneriler">Öneriler</a>
                 <a href="/adminhesap">Hesap Bilgilerim</a>
@@ -41,12 +43,46 @@
             </div>
 
 
+        </div>
 
+
+        <div class="container box" style="margin-top:6%; border-radius: 0px; padding: 2%">
+            <h3 class="subtitle is-3" style="margin-top:42px">Online Kullanıcılar</h3>
+            <% onlinelist.forEach(function(onlinelist){ %>
+
+            <div class="list is-hoverable">
+
+                <a class="list-item">
+
+                    <label class="label">Kullanıcı Adı </label>
+                    <input class="input" readonly="" id="username" name="kullanici" type="text"
+                        value="  <%= onlinelist.nick %>">
+                    <label class="label">Mesaj Sayısı</label>
+                    <input class="input" readonly="" id="username" name="konu" type="text"
+                        value=" <%= onlinelist.mesajSayisi  %>">
+                    <form action="/AdminOneriler" method="POST">
+                        <input class="input" id="username" name="no" type="text" value="<%= onlinelist.Id  %>"
+                            style="display:none">
+
+
+
+
+                    </form>
+
+
+                </a>
+
+            </div>
+            <% }); %>
         </div>
 
 
 
     </div>
+
+
+    </div>
+
     <div class="modal" id="modalim">
         <div class="modal-background"></div>
         <div class="uyari">
@@ -78,10 +114,9 @@
     </div>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
-    <script src="AdminSikayetler.js"></script>
+    <script src="oneri.js"></script>
     <script>
-        localStorage.setItem('Ad', document.getElementById('nick').innerHTML)
-
+        document.getElementById('nick').innerHTML = localStorage.getItem('Ad')
     </script>
 </body>
 

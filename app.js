@@ -50,11 +50,19 @@ app.post('/adminhesapupdate', login.AdminHesapUpdate);
 app.get('/adminhesap/:id', login.AdminHesapSilindi);
 app.get('/AdminSikayetler', login.GetAdminSikayetler);
 app.post('/AdminSikayetler', login.AdminSikayetBan);
+app.post('/AdminSikayetlerSil', login.AdminSikayetSil);
+app.get('/onlineList',login.onlineListele);
+app.get('/onlineListAdmin',login.onlineListeleAdmin);
+app.get('/AdminUyeList',login.GetUyeListele);
+app.post('/AdminUyeList',login.PostUyeListele);
+app.get('/AdminKullaniciBilgileri', login.GetAdminKullaniciBilgileri);
+app.post('/AdminKullaniciBilgileri', login.AdminUyeBan);
+app.get('/AdminBanList',login.GetBanListele);
+app.post('/AdminBanList',login.PostBanListele);
 /*
 app.get('/AdminOneriGorus',login.GetAdminOneriGorus);*/
 const port = process.env.PORT || 3000;
 server = app.listen(port);
-
 
 const io = require('socket.io')(server);
 
@@ -83,11 +91,20 @@ io.sockets.on('connection', (socket) => {
     io.emit('onlineUser', (count));
 
 
+    socket.on('onlineList', (data) => {
+        login.onlineList(data)
+        session.nick = data; 
+    });
+
+
     socket.on('disconnect', function () {
         console.log('Kullanıcı Ayrıldı')
         let count = Object.keys(io.sockets.connected).length
         io.emit('onlineUser', (count));
+        login.onlineListDEL(session.nick);
     });
+
+   
 
 
 
@@ -96,6 +113,7 @@ io.sockets.on('connection', (socket) => {
         /*socket.broadcast.emit('send message', (data));//'broadcast' kendisi haric socketteki baglı herkese yollar*/
         socket.emit('Imessage', (data.msg));// socket.emit sadece kendine gozukur ** io.emit tum soketteki herkese yollar
         login.msgEkle(data.msg, data.nick, data.oda);
+
     });
 })
 

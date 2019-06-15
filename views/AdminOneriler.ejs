@@ -20,24 +20,23 @@
         <nav class="navbar is-fixed-top" role="navigation" aria-label="dropdown navigation">
             <span style="font-size:25px;cursor:pointer;float:left" onclick="openNav()">&#9776;</span>
             <a class="subtitle is-4">MpChat</a>
+            <div id="nick" style="display:none"></div>
         </nav>
-
-        <div class="columns level-left">
-
-            <div id="mySidenav" class="sidenav">
+        <div id="mySidenav" class="sidenav">
 
                 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    
-                <a href="/admin" id="genel">Anasayfa</a>
-               
-                <a style="float: right;" class="subtitle is-5">Aktif : <span id="onlineUser"></span></a><br>
+                <a href="/admin" class="subtitle is-3">Admin Paneli</a>
+                <a  href="/AdminUyeList" >Üye Listesi</a>
+                <a  href="/AdminBanList" >Banlanan Kullanıcılar</a>
+                <a href="/AdminSikayetler">Şikayetler</a>
                 <a href="/AdminOneriler">Öneriler</a>
                 <a href="/adminhesap">Hesap Bilgilerim</a>
                 <% kullanici.forEach(function(user){ %>
                 <a name="/adminhesap/<%= user.Id %>" onclick="onay(this.name)">Hesabımı Sil</a>
                 <% }); %>
-        
+
                 <a href="/" id="Cikis">Çıkış</a>
+                <a href="/onlineListAdmin" style="float: right;" class="subtitle is-5">Aktif : <span id="onlineUser"></span></a><br>
 
             </div>
 
@@ -45,9 +44,14 @@
         </div>
 
 
-        <div class="container box" style="margin-top:4%; padding: 3%">
-            <h3 class="subtitle is-3">Öneri ve Görüşler</h3>
-            <div id="liste">
+        <div class="container box" style="margin-top:4%; padding: 2%">
+            <h3 class="subtitle is-3" style="margin-top:42px">Öneri ve Görüşler
+                    <%  OnerilerSayisi.forEach(function(Sayi){ %> 
+                        (<%= Sayi.OneriSayisi %>)
+                        <% }); %>
+            
+            </h3>
+            <h4 class="subtitle is-4" style="margin-top:30px;color:red;font-size:500"><%=hata%></h4>
                 <% Oneriler.forEach(function(Oneriler){ %>
 
                 <div class="list is-hoverable">
@@ -75,7 +79,6 @@
                 </div>
                 <% }); %>
             </div>
-        </div>
 
 
 
@@ -118,7 +121,7 @@
     <script src="oneri.js"></script>
     <script src="dbOperations.js"></script>
     <script>
-        localStorage.setItem('Ad', document.getElementById('nick').innerHTML)
+        document.getElementById('nick').innerHTML = localStorage.getItem('Ad')
 
     </script>
 </body>

@@ -10,12 +10,7 @@ $(function () {
     $(scrollingElement).animate({
         scrollTop: document.body.scrollHeight
     });
-    var socket = io.connect('/');
-    socket.emit('oda', 'Genel');
-
-    socket.on('onlineUser', (count) => {
-        $('#onlineUser').text(count);
-    });
+    
     function scrollBottom() {
 
         scrollingElement = document.getElementById('icerik');
@@ -26,7 +21,13 @@ $(function () {
     }
 
 });
+var socket = io.connect('/');
+    socket.emit('oda', 'Genel');
 
+    socket.on('onlineUser', (count) => {
+        $('#onlineUser').text(count);
+        socket.emit('onlineList', ($('#nick').text()));
+    });
 
 
 var close = document.getElementsByClassName('modal-close')[0];
