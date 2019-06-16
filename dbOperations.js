@@ -1007,50 +1007,57 @@ module.exports.AdminSikayetBan = function (req, res) {
                             console.log(err);
                         }
                         pool.request() // or: new sql.Request(pool2)
-                        .query("delete from sikayetMsj where Id in(select s.Id from sikayetMsj s,Mesajlar m,kullanici k where s.mesajId=m.Id and m.userId=k.Id and k.Id="+req.body.userNo+")", function (err, banla) {
-                            if (err) {
-                                console.log(err);
-                            }
-                        pool.request() // or: new sql.Request(pool2)
-                            .query("insert into BanlananKullanicilar values((select KullaniciAd from kullanici where Id= " + req.body.userNo + " ),(select Sifre from kullanici where Id= " + req.body.userNo + "),(select Email from kullanici where Id= " + req.body.userNo + "),(select GuvenlikSorusu from kullanici where Id= " + req.body.userNo+ "),(select Cevap from kullanici where Id= " + req.body.userNo+ "))", function (err, banla) {
+                            .query("delete from sikayetMsj where Id in(select s.Id from sikayetMsj s,Mesajlar m,kullanici k where s.mesajId=m.Id and m.userId=k.Id and k.Id=" + req.body.userNo + ")", function (err, banla) {
                                 if (err) {
                                     console.log(err);
                                 }
+
                                 pool.request() // or: new sql.Request(pool2)
-                                    .query("delete from kullanici where Id=(select Id from kullanici where Id=" + req.body.userNo + ")", function (err, banla) {
+                                    .query("delete from Oneriler where userID=" + req.body.userNo + "", function (err, OneriSil) {
                                         if (err) {
                                             console.log(err);
                                         }
-                                      
+                                        pool.request() // or: new sql.Request(pool2)
+                                            .query("insert into BanlananKullanicilar values((select KullaniciAd from kullanici where Id= " + req.body.userNo + " ),(select Sifre from kullanici where Id= " + req.body.userNo + "),(select Email from kullanici where Id= " + req.body.userNo + "),(select GuvenlikSorusu from kullanici where Id= " + req.body.userNo + "),(select Cevap from kullanici where Id= " + req.body.userNo + "))", function (err, banla) {
+                                                if (err) {
+                                                    console.log(err);
+                                                }
                                                 pool.request() // or: new sql.Request(pool2)
-                                                    .query("select userId, msg,KullaniciAd,m.odaAdi from sikayetMsj s,Mesajlar m,kullanici k where s.mesajId=m.Id and m.userId=k.Id ", function (err, Liste) {
+                                                    .query("delete from kullanici where Id=(select Id from kullanici where Id=" + req.body.userNo + ")", function (err, banla) {
                                                         if (err) {
                                                             console.log(err);
                                                         }
+
                                                         pool.request() // or: new sql.Request(pool2)
-                                                            .query("select k.Id,nick,mesaj,odaAdi from sikayetMsj s,kullanici k where mesaj like '%%' and k.KullaniciAd=s.nick ", function (err, Liste2) {
+                                                            .query("select userId, msg,KullaniciAd,m.odaAdi from sikayetMsj s,Mesajlar m,kullanici k where s.mesajId=m.Id and m.userId=k.Id ", function (err, Liste) {
                                                                 if (err) {
                                                                     console.log(err);
                                                                 }
                                                                 pool.request() // or: new sql.Request(pool2)
-                                                                    .query("select COUNT(*) as SikayetSayisi from sikayetMsj ", function (err, SikayetSayisi) {
+                                                                    .query("select k.Id,nick,mesaj,odaAdi from sikayetMsj s,kullanici k where mesaj like '%%' and k.KullaniciAd=s.nick ", function (err, Liste2) {
                                                                         if (err) {
                                                                             console.log(err);
                                                                         }
                                                                         pool.request() // or: new sql.Request(pool2)
-                                                                            .query("Select dbo.fn_SikayetSayisi() as Sonuc", function (err, SikayetVarmi) {
+                                                                            .query("select COUNT(*) as SikayetSayisi from sikayetMsj ", function (err, SikayetSayisi) {
                                                                                 if (err) {
                                                                                     console.log(err);
                                                                                 }
-                                                                                SikayetVarmi.recordset.forEach(function (sayi) {
-                                                                                    if (sayi.Sonuc == "Evet") {
+                                                                                pool.request() // or: new sql.Request(pool2)
+                                                                                    .query("Select dbo.fn_SikayetSayisi() as Sonuc", function (err, SikayetVarmi) {
+                                                                                        if (err) {
+                                                                                            console.log(err);
+                                                                                        }
+                                                                                        SikayetVarmi.recordset.forEach(function (sayi) {
+                                                                                            if (sayi.Sonuc == "Evet") {
 
-                                                                                        res.render('AdminSikayetler', { nick: req.session.nick, kullanici: kullanicilar.recordset, hata: '', Sikayetler: Liste.recordset, Sikayetler2: Liste2.recordset, SikayetSayisi: SikayetSayisi.recordset });
-                                                                                    }
-                                                                                    else {
-                                                                                        res.render('AdminSikayetler', { nick: req.session.nick, kullanici: kullanicilar.recordset, hata: 'Şikayet Bulunmamaktadır.', Sikayetler: Liste.recordset, Sikayetler2: Liste2.recordset, SikayetSayisi: SikayetSayisi.recordset });
-                                                                                    }
-                                                                                });
+                                                                                                res.render('AdminSikayetler', { nick: req.session.nick, kullanici: kullanicilar.recordset, hata: '', Sikayetler: Liste.recordset, Sikayetler2: Liste2.recordset, SikayetSayisi: SikayetSayisi.recordset });
+                                                                                            }
+                                                                                            else {
+                                                                                                res.render('AdminSikayetler', { nick: req.session.nick, kullanici: kullanicilar.recordset, hata: 'Şikayet Bulunmamaktadır.', Sikayetler: Liste.recordset, Sikayetler2: Liste2.recordset, SikayetSayisi: SikayetSayisi.recordset });
+                                                                                            }
+                                                                                        });
+                                                                                    });
                                                                             });
                                                                     });
                                                             });
@@ -1161,27 +1168,38 @@ module.exports.AdminUyeBan = function (req, res) {
                     console.log(err);
                 }
                 pool.request() // or: new sql.Request(pool2)
-                    .query("insert into BanlananKullanicilar values((select KullaniciAd from kullanici where Id= " + req.body.BanNo + " ),(select Sifre from kullanici where Id= " + req.body.BanNo + "),(select Email from kullanici where Id= " + req.body.BanNo + "),(select GuvenlikSorusu from kullanici where Id= " + req.body.BanNo + "),(select Cevap from kullanici where Id= " + req.body.BanNo + ")) ", function (err, banla) {
+                    .query("delete from Oneriler where userID=" + req.body.BanNo + "", function (err, OnerileriSil) {
                         if (err) {
                             console.log(err);
                         }
                         pool.request() // or: new sql.Request(pool2)
-                            .query("delete from kullanici where Id=(select Id from kullanici where Id=" + req.body.BanNo + ")", function (err, banla) {
+                            .query("delete from sikayetMsj where Id in(select s.Id from sikayetMsj s,Mesajlar m,kullanici k where s.mesajId=m.Id and m.userId=k.Id and k.Id=" + req.body.BanNo + ")", function (err, banla) {
                                 if (err) {
                                     console.log(err);
                                 }
-
-
-
-
                                 pool.request() // or: new sql.Request(pool2)
-                                    .query("select * from kullanici", function (err, kullanicilar) {
+                                    .query("insert into BanlananKullanicilar values((select KullaniciAd from kullanici where Id= " + req.body.BanNo + " ),(select Sifre from kullanici where Id= " + req.body.BanNo + "),(select Email from kullanici where Id= " + req.body.BanNo + "),(select GuvenlikSorusu from kullanici where Id= " + req.body.BanNo + "),(select Cevap from kullanici where Id= " + req.body.BanNo + ")) ", function (err, banla) {
                                         if (err) {
                                             console.log(err);
                                         }
-                                        res.render('AdminUyeList', { nick: req.session.nick, Adminkullanici: Adminkullanicilar.recordset, hata: '', kullanicilar: kullanicilar.recordset });
+                                        pool.request() // or: new sql.Request(pool2)
+                                            .query("delete from kullanici where Id=(select Id from kullanici where Id=" + req.body.BanNo + ")", function (err, banla) {
+                                                if (err) {
+                                                    console.log(err);
+                                                }
 
 
+
+
+                                                pool.request() // or: new sql.Request(pool2)
+                                                    .query("select * from kullanici", function (err, kullanicilar) {
+                                                        if (err) {
+                                                            console.log(err);
+                                                        }
+                                                        res.render('AdminUyeList', { nick: req.session.nick, Adminkullanici: Adminkullanicilar.recordset, hata: '', kullanicilar: kullanicilar.recordset });
+
+                                                    });
+                                            });
                                     });
                             });
                     });
