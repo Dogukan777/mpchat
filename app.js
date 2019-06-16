@@ -59,6 +59,7 @@ app.get('/AdminKullaniciBilgileri', login.GetAdminKullaniciBilgileri);
 app.post('/AdminKullaniciBilgileri', login.AdminUyeBan);
 app.get('/AdminBanList',login.GetBanListele);
 app.post('/AdminBanList',login.PostBanListele);
+app.post('/AdminMesajlariSil', login.PostAdminMesajlariSil);
 /*
 app.get('/AdminOneriGorus',login.GetAdminOneriGorus);*/
 const port = process.env.PORT || 3000;

@@ -83,26 +83,7 @@ module.exports.GirisYapildi = function (req, res) {
 
     return pool2Connect.then((pool) => {
 
-        pool.request() // or: new sql.Request(pool2)
-            .query("Select dbo.fn_AdminVarmi('" + req.body.ad + "','" + req.body.sifre + "') as Sonuc", function (err, verisonucu) {
-                if (err) {
-                    return console.error(err)
-                }
-                verisonucu.recordset.forEach(function (kullanici) {
-                    if (kullanici.Sonuc == "Evet") {
-                        req.session.nick = req.body.ad;
-                        pool.request()
-                            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                                req.session.sheld = true;
-                                res.render('admin', { nick: req.body.ad, kullanici: kullanicilar.recordset });
-                            });
-                    }
-
-                });
-            });
+  
 
         pool.request() // or: new sql.Request(pool2)
             .query(" Select dbo.fn_BanVarmi('" + req.body.ad + "') as Sonuc  ", function (err, ban) {
@@ -134,9 +115,21 @@ module.exports.GirisYapildi = function (req, res) {
                                                             if (err) {
                                                                 console.log(err);
                                                             }
+                                                            pool.request()
+                                                            .query("select OdaAdi,COUNT(*) as MesajSayisi from Mesajlar group by OdaAdi", function (err, MesajSayilari) {
+                                                                if (err) {
+                                                                    console.log(err);
+                                                                }
+                                                           
+
+
                                                             req.session.sheld = true;
-                                                            res.render('admin', { nick: req.body.ad, kullanici: kullanicilar.recordset });
+                                                            res.render('admin', { nick: req.body.ad, kullanici: kullanicilar.recordset,MesajSayilari:MesajSayilari.recordset });
                                                         });
+                                                    
+                                                
+                                        });
+
                                                 }
                                                 else if (kullanici.Sonuc == "Evet") {
 
@@ -502,9 +495,20 @@ module.exports.GetAdmin = function (req, res) {
                 if (err) {
                     console.log(err);
                 }
+                pool.request()
+                .query("select OdaAdi,COUNT(*) as MesajSayisi from Mesajlar group by OdaAdi", function (err, MesajSayilari) {
+                    if (err) {
+                        console.log(err);
+                    }
+                  
 
-                res.render('admin', { nick: req.session.nick, kullanici: kullanicilar.recordset });
+
+            
+
+                res.render('admin', { nick: req.session.nick, kullanici: kullanicilar.recordset,MesajSayilari:MesajSayilari.recordset });
             });
+});
+
 
     }).catch(err => {
         // ... error handler
@@ -1366,6 +1370,50 @@ module.exports.PostBanListele = function (req, res) {
     }).catch(err => {
         // ... error handler
     })
+}
+module.exports.PostAdminMesajlariSil = function (req, res) {
+    if (req.session.sheld == null) {
+        res.render('giris', { hata: 'Lütfen Önce Giriş Yapınız..' });
+    }
+    req.session.odaAdi=req.body.odaAdi
+    return pool2Connect.then((pool) => {
+
+
+        pool.request() // or: new sql.Request(pool2)
+            .query("select * from Adminler where KullaniciAd='" + req.session.nick + "'", function (err, kullanicilar) {
+                if (err) {
+                    console.log(err);
+                }
+           
+              
+
+                pool.request()
+                .query("delete from Mesajlar where OdaAdi='"+req.body.odaAdi+"'", function (err, MesajSayilariSil) {
+                    if (err) {
+                        console.log(err);
+                    }
+                pool.request()
+                .query("select OdaAdi,COUNT(*) as MesajSayisi from Mesajlar group by OdaAdi", function (err, MesajSayilari) {
+                    if (err) {
+                        console.log(err);
+                    }
+                 
+
+                            res.render('admin', { nick: req.session.nick, kullanici: kullanicilar.recordset,MesajSayilari:MesajSayilari.recordset});
+                        
+        
+
+              
+          
+        });
+        });
+});
+
+
+    }).catch(err => {
+        // ... error handler
+    })
+
 }
 /*
 module.exports.sil = function (req, res) {
