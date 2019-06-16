@@ -1012,7 +1012,7 @@ module.exports.AdminSikayetBan = function (req, res) {
                                 console.log(err);
                             }
                         pool.request() // or: new sql.Request(pool2)
-                            .query("insert into BanlananKullanicilar values((select KullaniciAd from kullanici where Id= " + req.body.userNo + " ),(select Sifre from kullanici where Id= " + req.body.sikayetNo + "),(select Email from kullanici where Id= " + req.body.sikayetNo + "),(select GuvenlikSorusu from kullanici where Id= " + req.body.sikayetNo + "),(select Cevap from kullanici where Id= " + req.body.sikayetNo + "))", function (err, banla) {
+                            .query("insert into BanlananKullanicilar values((select KullaniciAd from kullanici where Id= " + req.body.userNo + " ),(select Sifre from kullanici where Id= " + req.body.userNo + "),(select Email from kullanici where Id= " + req.body.userNo + "),(select GuvenlikSorusu from kullanici where Id= " + req.body.userNo+ "),(select Cevap from kullanici where Id= " + req.body.userNo+ "))", function (err, banla) {
                                 if (err) {
                                     console.log(err);
                                 }
