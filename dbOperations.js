@@ -1082,15 +1082,37 @@ module.exports.GetUyeListele = function (req, res) {
                 if (err) {
                     console.log(err);
                 }
-
                 pool.request() // or: new sql.Request(pool2)
-                    .query("select * from kullanici", function (err, kullanicilar) {
+                    .query("select COUNT(*) as KullaniciSayisi from kullanici", function (err, KullaniciSayisi) {
                         if (err) {
                             console.log(err);
                         }
-                        res.render('AdminUyeList', { nick: req.session.nick, Adminkullanici: Adminkullanicilar.recordset, hata: '', kullanicilar: kullanicilar.recordset });
+                        
 
+                        pool.request() // or: new sql.Request(pool2)
+                            .query("select * from kullanici", function (err, kullanicilar) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                pool.request() // or: new sql.Request(pool2)
+                                .query("Select dbo.fn_UyeSayisi() as Sonuc", function (err, KullaniciVarmi) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    KullaniciVarmi.recordset.forEach(function (sayi) {
+                                        if (sayi.Sonuc == "Evet") {
 
+                                res.render('AdminUyeList', { nick: req.session.nick, Adminkullanici: Adminkullanicilar.recordset, hata: '', kullanicilar: kullanicilar.recordset,Kullanici:KullaniciSayisi.recordset });
+                                   
+                            
+                            }
+                            else{
+                                res.render('AdminUyeList', { nick: req.session.nick, Adminkullanici: Adminkullanicilar.recordset, hata: 'Üye Bulunmamaktadır.', kullanicilar: kullanicilar.recordset,Kullanici:KullaniciSayisi.recordset });
+                                   
+                            }
+                            });
+                            });
+                            });
                     });
             });
     }).catch(err => {
@@ -1196,9 +1218,29 @@ module.exports.AdminUyeBan = function (req, res) {
                                                         if (err) {
                                                             console.log(err);
                                                         }
-                                                        res.render('AdminUyeList', { nick: req.session.nick, Adminkullanici: Adminkullanicilar.recordset, hata: '', kullanicilar: kullanicilar.recordset });
+                                                        pool.request() // or: new sql.Request(pool2)
+                                                        .query("select COUNT(*) as KullaniciSayisi from kullanici", function (err, KullaniciSayisi) {
+                                                            if (err) {
+                                                                console.log(err);
+                                                            }
+                                                            pool.request() // or: new sql.Request(pool2)
+                                                            .query("Select dbo.fn_UyeSayisi() as Sonuc", function (err, KullaniciVarmi) {
+                                                                if (err) {
+                                                                    console.log(err);
+                                                                }
+                                                                KullaniciVarmi.recordset.forEach(function (sayi) {
+                                                                    if (sayi.Sonuc == "Evet") {
+                                                        res.render('AdminUyeList', { nick: req.session.nick, Adminkullanici: Adminkullanicilar.recordset, hata: '', kullanicilar: kullanicilar.recordset,Kullanici:KullaniciSayisi.recordset });
+                                                                    }
+                                                                    else{
+                                                                        res.render('AdminUyeList', { nick: req.session.nick, Adminkullanici: Adminkullanicilar.recordset, hata: 'Üye Bulunmamaktadır.', kullanicilar: kullanicilar.recordset,Kullanici:KullaniciSayisi.recordset });
+                                                                 
+                                                                    }
 
                                                     });
+                                                    });
+                                                });
+                                            });
                                             });
                                     });
                             });
