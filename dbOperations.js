@@ -1011,11 +1011,18 @@ module.exports.AdminSikayetBan = function (req, res) {
                             console.log(err);
                         }
                       
+                        
+                          
                         pool.request() // or: new sql.Request(pool2)
                             .query("delete from sikayetMsj where Id in(select s.Id from sikayetMsj s,Mesajlar m,kullanici k where s.mesajId=m.Id and m.userId=k.Id and k.Id=" + req.body.userNo + ")", function (err, banla) {
                                 if (err) {
                                     console.log(err);
                                 }
+                                pool.request() // or: new sql.Request(pool2)
+                                .query("delete from Mesajlar where userID="+req.body.userNo+"", function (err, MesajlariSil) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
 
                                 pool.request() // or: new sql.Request(pool2)
                                     .query("delete from Oneriler where userID=" + req.body.userNo + "", function (err, OneriSil) {
@@ -1065,6 +1072,7 @@ module.exports.AdminSikayetBan = function (req, res) {
                                                                                     });
                                                                             });
                                                                               });
+                                                                            });
                                                                    
                                                             });
                                                     });
@@ -1200,16 +1208,18 @@ module.exports.AdminUyeBan = function (req, res) {
                         if (err) {
                             console.log(err);
                         }
-                        pool.request() // or: new sql.Request(pool2)
-                        .query("delete from Mesajlar where userID in(select Id from kullanici where Id='"+req.body.BanNo+"')", function (err, OnerileriSil) {
-                            if (err) {
-                                console.log(err);
-                            }
+                       
+                      
                         pool.request() // or: new sql.Request(pool2)
                             .query("delete from sikayetMsj where Id in(select s.Id from sikayetMsj s,Mesajlar m,kullanici k where s.mesajId=m.Id and m.userId=k.Id and k.Id=" + req.body.BanNo + ")", function (err, banla) {
                                 if (err) {
                                     console.log(err);
                                 }
+                                pool.request() // or: new sql.Request(pool2)
+                                .query("delete from Mesajlar where userID="+req.body.BanNo+"", function (err, MesajlariSil) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
                                 pool.request() // or: new sql.Request(pool2)
                                     .query("insert into BanlananKullanicilar values((select KullaniciAd from kullanici where Id= " + req.body.BanNo + " ),(select Sifre from kullanici where Id= " + req.body.BanNo + "),(select Email from kullanici where Id= " + req.body.BanNo + "),(select GuvenlikSorusu from kullanici where Id= " + req.body.BanNo + "),(select Cevap from kullanici where Id= " + req.body.BanNo + ")) ", function (err, banla) {
                                         if (err) {
@@ -1249,7 +1259,8 @@ module.exports.AdminUyeBan = function (req, res) {
                                                                     }
 
                                                     });
-                                                    });
+                                                    
+                                                });
                                                 });
                                                 });
                                             });
